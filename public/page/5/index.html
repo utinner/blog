@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>靳平の博客</title>
+  <meta name="description" content="一个默默无闻的代码搬运工(*^▽^*)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="代码乐园">
+<meta property="og:url" content="https://utinner.gitee.io/page/5/index.html">
+<meta property="og:site_name" content="代码乐园">
+<meta property="og:description" content="一个默默无闻的代码搬运工(*^▽^*)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JinPing">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://utinner.gitee.io/page/5/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="代码乐园" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/utinner" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">靳平</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">北漂程序员</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Beijing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>持续更新中，欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E8%AE%B0/">生活小记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E5%91%98/">程序员</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法和数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IO/" rel="tag">IO</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/" rel="tag">MongoDB</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http%EF%BC%8Cssl/" rel="tag">http，ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="tag">内存模型</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" rel="tag">定时任务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%99%AE/" rel="tag">科普</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" rel="tag">考研英语</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" rel="tag">音视频行业</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Docker/" style="font-size: 13.67px;">Docker</a> <a href="/tags/Flink/" style="font-size: 13.17px;">Flink</a> <a href="/tags/IO/" style="font-size: 13px;">IO</a> <a href="/tags/JVM/" style="font-size: 13.67px;">JVM</a> <a href="/tags/Java/" style="font-size: 13.5px;">Java</a> <a href="/tags/Java%E5%9F%BA%E7%A1%80/" style="font-size: 13.17px;">Java基础</a> <a href="/tags/Maven/" style="font-size: 13px;">Maven</a> <a href="/tags/MongoDB/" style="font-size: 13.17px;">MongoDB</a> <a href="/tags/Mysql/" style="font-size: 13.17px;">Mysql</a> <a href="/tags/Spring/" style="font-size: 13px;">Spring</a> <a href="/tags/SpringCloud/" style="font-size: 13.33px;">SpringCloud</a> <a href="/tags/git/" style="font-size: 13.17px;">git</a> <a href="/tags/http%EF%BC%8Cssl/" style="font-size: 13px;">http，ssl</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">内存模型</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 13px;">分布式</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 13.17px;">基础知识</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 13px;">多线程</a> <a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 13px;">定时任务</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 13px;">生活</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 13px;">科普</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a> <a href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" style="font-size: 13.83px;">考研英语</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 13.33px;">面试题</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" style="font-size: 13px;">音视频行业</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E8%AE%B0/">生活小记</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/15/%E5%B0%8F%E8%AE%B0/" class="title">小记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/10/%E5%AE%8C%E5%BD%A2%E5%A1%AB%E7%A9%BA/" class="title">完形填空</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-10T09:06:34.000Z" itemprop="datePublished">2021-11-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/09/%E8%8B%B1%E8%AF%AD%E5%90%8E%E7%BC%80/" class="title">英语后缀</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-09T05:57:52.000Z" itemprop="datePublished">2021-11-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/08/%E9%A2%9D%E5%A4%96%E7%9A%84%E8%AF%8D%E6%A0%B9/" class="title">额外的词根</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  <main class="main" role="main">
+  
+  <div class="content article-list">
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/10/27/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">垃圾回收</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<h3 id="一-如何知道对象是一个垃圾？"><a href="#一-如何知道对象是一个垃圾？" class="headerlink" title="一.如何知道对象是一个垃圾？"></a>一.如何知道对象是一个垃圾？</h3><p>没有任何引用指向的对象就是垃圾。</p>
+<ul>
+<li>可达性分析(非GCRoot引用的对象)<ol>
+<li>通过判断对象的引用链是否可达来决定对象是否可以被回收</li>
+<li>通过一系列名为GCRoot的对象为起始点，从这些节点开始向下搜索，搜索所走过的路径就被称为引用链</li>
+<li>当一个对象从GCRoot没有任何引用链相连，即从GCRoot到这个对象是不可达的，在这个时候就证明了这个对象是不可用的，可以进行回收</li>
+</ol>
+</li>
+<li>引用计数法（判断对象的引用数量来决定对象是否可以被回收）<ol>
+<li>每个对象实例都有一个引用计数器，被引用则+1，完成引用则-1</li>
+<li>任何引用计数为0的对象实例可以被当做垃圾收集<br>优点：执行效率高，程序执行受影响较小<br>缺点：无法检测出循环引用的情况，导致内存泄漏</li>
+</ol>
+</li>
+</ul>
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/27/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" class="article-date">
+	  <time datetime="2020-10-26T20:00:51.000Z" itemprop="datePublished">2020-10-27</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/JVM/" rel="tag">JVM</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/10/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%86%85%E5%AD%98/">计算机内存</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<h1 id="存储器的层次结构"><a href="#存储器的层次结构" class="headerlink" title="存储器的层次结构"></a>存储器的层次结构</h1><ul>
+<li>L0:寄存器（最快、最小、成本最高）</li>
+<li>L1:高速缓存</li>
+<li>L2:高速缓存</li>
+<li>L3:高速缓存</li>
+<li>L4:主存</li>
+<li>L5:磁盘</li>
+<li>L6:远程文件存储
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%86%85%E5%AD%98/" class="article-date">
+	  <time datetime="2020-10-26T19:29:33.000Z" itemprop="datePublished">2020-10-27</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/10/27/Java%E7%9A%84%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8/">Java的四种引用</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<p>Java里面有四种引用类型：强、软、弱、虚</p>
+<p><img src="Java%E7%9A%84%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8/3.png" alt="四种引用"></p>
+<h2 id="一-强引用"><a href="#一-强引用" class="headerlink" title="一.强引用"></a>一.强引用</h2><p>就是我们普通的引用。作为一个垃圾来说，什么时候才会被回收呢？当一个对象实例没有任何引用指向它的时候，它就是可以被回收的。当对象被回收的时候，会调用对象的<code>finalize</code>方法。</p>
+<ul>
+<li>最普遍的引用：<code>Object obj = new Object</code></li>
+<li>抛出OutOfMemoryError终止程序也不会回收具有强引用的对象</li>
+<li>通过将对象设置为null来弱化引用，使其被回收</li>
+</ul>
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/27/Java%E7%9A%84%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8/" class="article-date">
+	  <time datetime="2020-10-26T17:22:01.000Z" itemprop="datePublished">2020-10-27</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/JVM/" rel="tag">JVM</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/10/23/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9B%B8%E5%85%B3%E9%9D%A2%E8%AF%95%E9%A2%98/">多线程相关面试题</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<h2 id="Java中进程和线程的关系"><a href="#Java中进程和线程的关系" class="headerlink" title="Java中进程和线程的关系"></a>Java中进程和线程的关系</h2><p>Java对操作系统提供的功能进行封装，包括进程和线程<br>运行一个程序会产生一个进程，进程包含至少一个线程<br>每个进程对应一个JVM实例，多个线程共享JVM里的堆<br>Java采用单线程编程模型，程序会自动创建主线程<br>主线程可以创建子线程，原则上要后于子线程完成执行</p>
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/23/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9B%B8%E5%85%B3%E9%9D%A2%E8%AF%95%E9%A2%98/" class="article-date">
+	  <time datetime="2020-10-23T05:40:34.000Z" itemprop="datePublished">2020-10-23</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试准备</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<h1 id="一-基础"><a href="#一-基础" class="headerlink" title="一.基础"></a>一.基础</h1><h2 id="1-hashmap"><a href="#1-hashmap" class="headerlink" title="1.hashmap"></a>1.hashmap</h2><p>HashMap是基于哈希表的Map接口的非同步实现。此实现提供所有可选的映射操作，并且允许null键和null值。不保证顺序。</p>
+<h3 id="1-1-7与8的区别"><a href="#1-1-7与8的区别" class="headerlink" title="1.1 7与8的区别"></a>1.1 7与8的区别</h3><p>hashmap初始容量都是16，扩容因子是0.75倍.当元素的数量达到了<code>16*0.75=12</code>的时候，会进行扩容。<br>底层：数组+链表。数组中的元素存放的是entry的引用</p>
+<ul>
+<li>jdk8中会将链表转化为红黑树（红黑树的查询插入效率介于链表和二叉树之间）</li>
+<li>新节点插入链表的顺序不同（jdk7是插入头节点，jdk8因为要遍历链表把链表变为红黑树所以采用插入尾结点）</li>
+<li>hash算法简化。因为使用了红黑树，即使散列不均匀查询效率也不会很低。</li>
+<li>resize的逻辑修改（jdk7会出现死循环，jdk8不会），resize方法完成了初始化和扩容。</li>
+</ul>
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/" class="article-date">
+	  <time datetime="2020-10-22T16:45:13.000Z" itemprop="datePublished">2020-10-23</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/17/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/">分布式一致性问题</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<h3 id="分布式事务一致性框架与分布式系统一致性算法"><a href="#分布式事务一致性框架与分布式系统一致性算法" class="headerlink" title="分布式事务一致性框架与分布式系统一致性算法"></a>分布式事务一致性框架与分布式系统一致性算法</h3><p><strong>分布式事务一致性框架：</strong> 核心就是解决我们在实际系统中产生跨事务导致分布式事务的问题，核心靠的是最终一致性。比如：rocketMq事务消息、rabbitmq补单、lcn、seata等。<br><strong>分布式系统一致性算法：</strong> 解决我们系统之间集群之后每隔节点保持数据的一致性。比如：raft、zab、paxos等<br>分布式系统一致性算法应用于系统软件实现集群保持每隔节点数据的同步性。保持我们的集群中每个节点的数据的一致性问题。</p>
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/17/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/" class="article-date">
+	  <time datetime="2020-08-17T09:53:50.000Z" itemprop="datePublished">2020-08-17</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/17/Nacos%E5%92%8C%E5%85%B6%E4%BB%96%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E7%9A%84%E6%AF%94%E8%BE%83/">Nacos和其他注册中心的比较</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<h3 id="CAP定律"><a href="#CAP定律" class="headerlink" title="CAP定律"></a>CAP定律</h3><p>这个定理的内容是指的是在一个分布式系统中、<code>Consistency（一致性）</code>、 <code>Availability（可用性）</code>、<code>Partition tolerance（分区容错性）</code>，三者不可得兼。</p>
+<p><strong>一致性(C)：</strong> 在分布式系统中，如果服务器集群，每个节点在同时刻访问必须要保持数据的一致性。<br><strong>可用性(A)：</strong> 集群节点中，部分节点出现故障后任然可以使用 （高可用）<br><strong>分区容错性(P)：</strong> 在分布式系统中网络会存在脑裂的问题，部分Server与整个集群失去节点联系，无法组成一个群体。</p>
+<p>只有在CP和AP选择一个平衡点</p>
+<p>两种情况：</p>
+<ul>
+<li>CP情况下，虽然我们服务不能用，但是必须要保证数据的一致性</li>
+<li>AP情况下，可以短暂保证数据不一致，但是最终可以一致性，不管怎么样，要保证我的服务可用。<br>注册中心大多数采用<strong>AP</strong> 模式
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/17/Nacos%E5%92%8C%E5%85%B6%E4%BB%96%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E7%9A%84%E6%AF%94%E8%BE%83/" class="article-date">
+	  <time datetime="2020-08-17T09:10:18.000Z" itemprop="datePublished">2020-08-17</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/17/%E5%88%86%E5%B8%83%E5%BC%8F%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/">分布式配置中心</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<h1 id="一-分布式配置中心的作用"><a href="#一-分布式配置中心的作用" class="headerlink" title="一.分布式配置中心的作用"></a>一.分布式配置中心的作用</h1><p>分布式配置中心可以实现不需要重启我们的服务器，动态的修改我们的配置文件内容，<br>常见的配置中心有携程的阿波罗、SpringCloud Config、Nacos轻量级的配置中心等。</p>
+<p><strong>轻量级：</strong> 部署、架构设计原理都比较简单，学习成本也比较低。<br><strong>重量级：</strong> 部署、架构设计、体积都非常大，学习成本比较高。</p>
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/17/%E5%88%86%E5%B8%83%E5%BC%8F%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="article-date">
+	  <time datetime="2020-08-17T06:41:22.000Z" itemprop="datePublished">2020-08-17</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/05/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0nacos/">服务注册与发现nacos</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <meta name="referrer" content="no-referrer" />
+
+<h3 id="服务治理基本的概念"><a href="#服务治理基本的概念" class="headerlink" title="服务治理基本的概念"></a>服务治理基本的概念</h3><p><strong>服务治理概念：</strong><br>在RPC远程调用过程中，服务与服务之间依赖关系非常大，服务Url地址管理非常复杂，所以这时候需要对我们服务的url实现治理，通过服务治理可以实现服务注册与发现、负载均衡、容错等。<br><strong>服务注册中心的概念</strong><br>每次调用该服务如果地址直接写死的话，一旦接口发生变化的情况下，这时候需要重新发布版本才可以该接口调用地址，所以需要一个注册中心统一管理我们的服务注册与发现。</p>
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/05/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0nacos/" class="article-date">
+	  <time datetime="2020-08-05T09:15:39.000Z" itemprop="datePublished">2020-08-05</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/08/03/%E4%BD%9C%E4%B8%9A%E5%B8%AE%E9%9D%A2%E8%AF%95%E9%A2%98/">作业帮面试题</a>
+    </h1>
+  
+
+  </div>
+  
+  <div class="article-entry text-muted" itemprop="description">
+    <p>作业帮的面试官是做python的，所以java基本也没怎么问，主要是问了最近做的项目，更多的是redis和算法、linux的相关命令等操作，详细列一下吧</p>
+<h3 id="算法题"><a href="#算法题" class="headerlink" title="算法题"></a>算法题</h3><blockquote>
+<p>1、手写二叉树的先序遍历<br>2、给定义一个int数组（里面给的都是不重复的0-9的数字）和一个数字（这个数字是这个字符数组的随机组合）num，求出这个int数组所有随机排列组合的数字中比给定的num大的组合中，最小的一个<br>例子：字符数组：[1,2,3,4,5]，num：34125。那么最终结果为：34152</p>
+</blockquote>
+  </div>
+  
+  <p class="article-meta">
+    <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/03/%E4%BD%9C%E4%B8%9A%E5%B8%AE%E9%9D%A2%E8%AF%95%E9%A2%98/" class="article-date">
+	  <time datetime="2020-08-03T08:48:14.000Z" itemprop="datePublished">2020-08-03</time>
+	</a>
+</span>
+    
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a>
+  </span>
+
+    
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a>
+  </span>
+
+
+    
+  </p>
+</article>
+
+    
+  </div>
+
+  
+    
+    <nav class="bar bar-footer clearfix" data-stick-bottom>
+        <div class="bar-inner">
+        <ul class="pager pull-left">
+            
+            <li class="prev">
+                <a href="/page/4/">
+                    <i class="icon icon-angle-left"></i>
+                    上一页
+                </a>
+            </li>
+            
+            
+            <li class="next">
+                <a href="/page/6/">
+                    下一页
+                    <i class="icon icon-angle-right"></i>
+                </a>
+            </li>
+            
+        </ul>
+            <div class="total-article bar-right">Page 5 of 6</div>
+        </div>
+    </nav>
+    
+ 
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<!-- custom analytics part create by xiamo -->
+<script defer src="https://cdn1.lncld.net/static/js/av-min-1.2.1.js"></script>
+<script defer>
+AV.init({
+  appId: 'BNPHGqdExiXaEZFh4AgOPmmu-gzGzoHsz',
+  appKey: 's3p79Nt6MZRbWf5rPoOj9DES'
+});
+
+function showTime(Counter) {
+	var query = new AV.Query(Counter);
+		var visitors= $('.leancloud_visitors');
+		query.greaterThanOrEqualTo("time", 0);		
+		query.find({
+			success: function(results) {
+				if (results.length == 0) {				
+					return;
+				}
+				var data = results;
+				visitors.each(function(){
+					var url = $(this).attr('id').trim();					
+					for (var i = 0; i < data.length; i++) {
+						var object = data[i];
+						var content = object.get('time');
+						var _url = object.get('url')
+						if(url == _url){
+							$(this).text(content);
+						}
+					}
+				})
+				
+			},
+			error: function(object, error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+}
+
+function addCount(Counter) {
+	var Counter = AV.Object.extend("Counter");
+	url = $(".leancloud_visitors").attr('id').trim();
+	title = $(".leancloud_visitors").attr('data-flag-title').trim();
+	var query = new AV.Query(Counter);
+	query.equalTo("url", url);
+	query.find({
+		success: function(results) {
+			if (results.length > 0) {
+				var counter = results[0];
+				counter.fetchWhenSave(true);
+				counter.increment("time");
+				counter.save(null, {
+					success: function(counter) {
+						var content = counter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(counter, error) {
+						console.log('Failed to save Visitor num, with error message: ' + error.message);
+					}
+				});
+			} else {
+				var newcounter = new Counter();
+				newcounter.set("title", title);
+				newcounter.set("url", url);
+				newcounter.set("time", 1);
+				newcounter.save(null, {
+					success: function(newcounter) {
+					    console.log("newcounter.get('time')="+newcounter.get('time'));
+						var content = newcounter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(newcounter, error) {
+						console.log('Failed to create');
+					}
+				});
+			}
+		},
+		error: function(error) {
+			console.log('Error:' + error.code + " " + error.message);
+		}
+	});
+}
+$(function() {
+	var Counter = AV.Object.extend("Counter");
+	if ($('.leancloud_visitors').length == 1) {
+		addCount(Counter);
+	} else {
+		showTime(Counter);
+	}
+}); 
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

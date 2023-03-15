@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>redis内部数据结构(3)--robj | 靳平の博客</title>
+  <meta name="description" content="从Redis的使用者的角度来看，一个Redis节点包含多个database（非cluster模式下默认是16个，cluster模式下只能是1个），而一个database维护了从key space到object space的映射关系。这个映射关系的key是string类型，而value可以是多种数据类型，比如：string, list, hash等。我们可以看到，key的类型固定是string，而">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis内部数据结构(3)--robj">
+<meta property="og:url" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-3-robj/index.html">
+<meta property="og:site_name" content="代码乐园">
+<meta property="og:description" content="从Redis的使用者的角度来看，一个Redis节点包含多个database（非cluster模式下默认是16个，cluster模式下只能是1个），而一个database维护了从key space到object space的映射关系。这个映射关系的key是string类型，而value可以是多种数据类型，比如：string, list, hash等。我们可以看到，key的类型固定是string，而">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-26T07:47:05.000Z">
+<meta property="article:modified_time" content="2021-12-06T09:23:00.874Z">
+<meta property="article:author" content="JinPing">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-3-robj/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="代码乐园" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/utinner" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">靳平</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">北漂程序员</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Beijing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>持续更新中，欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E8%AE%B0/">生活小记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E5%91%98/">程序员</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法和数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IO/" rel="tag">IO</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/" rel="tag">MongoDB</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http%EF%BC%8Cssl/" rel="tag">http，ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="tag">内存模型</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" rel="tag">定时任务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%99%AE/" rel="tag">科普</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" rel="tag">考研英语</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" rel="tag">音视频行业</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Docker/" style="font-size: 13.67px;">Docker</a> <a href="/tags/Flink/" style="font-size: 13.17px;">Flink</a> <a href="/tags/IO/" style="font-size: 13px;">IO</a> <a href="/tags/JVM/" style="font-size: 13.67px;">JVM</a> <a href="/tags/Java/" style="font-size: 13.5px;">Java</a> <a href="/tags/Java%E5%9F%BA%E7%A1%80/" style="font-size: 13.17px;">Java基础</a> <a href="/tags/Maven/" style="font-size: 13px;">Maven</a> <a href="/tags/MongoDB/" style="font-size: 13.17px;">MongoDB</a> <a href="/tags/Mysql/" style="font-size: 13.17px;">Mysql</a> <a href="/tags/Spring/" style="font-size: 13px;">Spring</a> <a href="/tags/SpringCloud/" style="font-size: 13.33px;">SpringCloud</a> <a href="/tags/git/" style="font-size: 13.17px;">git</a> <a href="/tags/http%EF%BC%8Cssl/" style="font-size: 13px;">http，ssl</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">内存模型</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 13px;">分布式</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 13.17px;">基础知识</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 13px;">多线程</a> <a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 13px;">定时任务</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 13px;">生活</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 13px;">科普</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a> <a href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" style="font-size: 13.83px;">考研英语</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 13.33px;">面试题</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" style="font-size: 13px;">音视频行业</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E8%AE%B0/">生活小记</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/15/%E5%B0%8F%E8%AE%B0/" class="title">小记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/10/%E5%AE%8C%E5%BD%A2%E5%A1%AB%E7%A9%BA/" class="title">完形填空</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-10T09:06:34.000Z" itemprop="datePublished">2021-11-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/09/%E8%8B%B1%E8%AF%AD%E5%90%8E%E7%BC%80/" class="title">英语后缀</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-09T05:57:52.000Z" itemprop="datePublished">2021-11-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/08/%E9%A2%9D%E5%A4%96%E7%9A%84%E8%AF%8D%E6%A0%B9/" class="title">额外的词根</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-redis内部数据结构-3-robj" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis内部数据结构(3)--robj
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-3-robj/" class="article-date">
+	  <time datetime="2020-11-26T07:47:05.000Z" itemprop="datePublished">2020-11-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/redis/" rel="tag">redis</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-3-robj/" class="leancloud_visitors"  data-flag-title="redis内部数据结构(3)--robj">0</span>
+    </span>
+
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <meta name="referrer" content="no-referrer" />
+从Redis的使用者的角度来看，一个Redis节点包含多个database（非cluster模式下默认是16个，cluster模式下只能是1个），而一个database维护了从key space到object space的映射关系。这个映射关系的key是string类型，而value可以是多种数据类型，比如：string, list, hash等。我们可以看到，key的类型固定是string，而value可能的类型是多个。
+
+<p>而从Redis内部实现的角度来看，在前面第一篇文章中，我们已经提到过，一个database内的这个映射关系是用一个dict来维护的。dict的key固定用一种数据结构来表达就够了，这就是动态字符串sds。而value则比较复杂，为了在同一个dict内能够存储不同类型的value，这就需要一个通用的数据结构，这个通用的数据结构就是robj（全名是redisObject）。举个例子：如果value是一个list，那么它的内部存储结构是一个quicklist；如果value是一个string，那么它的内部存储结构一般情况下是一个sds。当然实际情况更复杂一点，比如一个string类型的value，如果它的值是一个数字，那么Redis内部还会把它转成long型来存储，从而减小内存使用。而一个robj既能表示一个sds，也能表示一个quicklist，甚至还能表示一个long型。</p>
+<span id="more"></span>
+<h3 id="robj的数据结构定义"><a href="#robj的数据结构定义" class="headerlink" title="robj的数据结构定义"></a>robj的数据结构定义</h3><p>在server.h中我们找到跟robj定义相关的代码，如下（注意，本系列文章中的代码片段全部来源于Redis源码的3.2分支）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Object types */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_STRING 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_LIST 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_SET 2</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ZSET 3</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_HASH 4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Objects encoding. Some kind of objects like Strings and Hashes can be</span></span><br><span class="line"><span class="comment"> * internally represented in multiple ways. The &#x27;encoding&#x27; field of the object</span></span><br><span class="line"><span class="comment"> * is set to one of this fields for this object. */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_RAW 0     <span class="comment">/* Raw representation */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_INT 1     <span class="comment">/* Encoded as integer */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_HT 2      <span class="comment">/* Encoded as hash table */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_ZIPMAP 3  <span class="comment">/* Encoded as zipmap */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_LINKEDLIST 4 <span class="comment">/* Encoded as regular linked list */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_ZIPLIST 5 <span class="comment">/* Encoded as ziplist */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_INTSET 6  <span class="comment">/* Encoded as intset */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_SKIPLIST 7  <span class="comment">/* Encoded as skiplist */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_EMBSTR 8  <span class="comment">/* Embedded sds string encoding */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_QUICKLIST 9 <span class="comment">/* Encoded as linked list of ziplists */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LRU_BITS 24</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">redisObject</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> type:<span class="number">4</span>;</span><br><span class="line">    <span class="type">unsigned</span> encoding:<span class="number">4</span>;</span><br><span class="line">    <span class="type">unsigned</span> lru:LRU_BITS; <span class="comment">/* lru time (relative to server.lruclock) */</span></span><br><span class="line">    <span class="type">int</span> refcount;</span><br><span class="line">    <span class="type">void</span> *ptr;</span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
+<p>一个robj包含如下5个字段：</p>
+<ul>
+<li>type: 对象的数据类型。占4个bit。可能的取值有5种：OBJ_STRING, OBJ_LIST, OBJ_SET, OBJ_ZSET, OBJ_HASH，分别对应Redis对外暴露的5种数据结构（即我们在第一篇文章中提到的第一个层面的5种数据结构）。</li>
+<li>encoding: 对象的内部表示方式（也可以称为编码）。占4个bit。可能的取值有10种，即前面代码中的10个OBJ_ENCODING_XXX常量。</li>
+<li>lru: 做LRU替换算法用，占24个bit。这个不是我们这里讨论的重点，暂时忽略。</li>
+<li>refcount: 引用计数。它允许robj对象在某些情况下被共享。</li>
+<li>ptr: 数据指针。指向真正的数据。比如，一个代表string的robj，它的ptr可能指向一个sds结构；一个代表list的robj，它的ptr可能指向一个quicklist。</li>
+</ul>
+<p>这里特别需要仔细察看的是encoding字段。对于同一个type，还可能对应不同的encoding，这说明同样的一个数据类型，可能存在不同的内部表示方式。而不同的内部表示，在内存占用和查找性能上会有所不同。<br>比如，当type = OBJ_STRING的时候，表示这个robj存储的是一个string，这时encoding可以是下面3种中的一种：</p>
+<ul>
+<li>OBJ_ENCODING_RAW: string采用原生的表示方式，即用sds来表示。</li>
+<li>OBJ_ENCODING_INT: string采用数字的表示方式，实际上是一个long型。</li>
+<li>OBJ_ENCODING_EMBSTR: string采用一种特殊的嵌入式的sds来表示。</li>
+</ul>
+<p>再举一个例子：当type = OBJ_HASH的时候，表示这个robj存储的是一个hash，这时encoding可以是下面2种中的一种：</p>
+<ul>
+<li>OBJ_ENCODING_HT: hash采用一个dict来表示。</li>
+<li>OBJ_ENCODING_ZIPLIST: hash采用一个ziplist来表示（ziplist的具体实现我们放在后面的文章讨论）。</li>
+</ul>
+<p>本文剩余主要部分将针对表示string的robj对象，围绕它的3种不同的encoding来深入讨论。前面代码段中出现的所有10种encoding，在这里我们先简单解释一下，在这个系列后面的文章中，我们应该还有机会碰到它们。</p>
+<ul>
+<li>OBJ_ENCODING_RAW: 最原生的表示方式。其实只有string类型才会用这个encoding值（表示成sds）。</li>
+<li>OBJ_ENCODING_INT: 表示成数字。实际用long表示。</li>
+<li>OBJ_ENCODING_HT: 表示成dict。</li>
+<li>OBJ_ENCODING_ZIPMAP: 是个旧的表示方式，已不再用。在小于Redis 2.6的版本中才有。</li>
+<li>OBJ_ENCODING_LINKEDLIST: 也是个旧的表示方式，已不再用。</li>
+<li>OBJ_ENCODING_ZIPLIST: 表示成ziplist。</li>
+<li>OBJ_ENCODING_INTSET: 表示成intset。用于set数据结构。</li>
+<li>OBJ_ENCODING_SKIPLIST: 表示成skiplist。用于sorted set数据结构。</li>
+<li>OBJ_ENCODING_EMBSTR: 表示成一种特殊的嵌入式的sds。</li>
+<li>OBJ_ENCODING_QUICKLIST: 表示成quicklist。用于list数据结构。</li>
+</ul>
+<p><strong>robj的作用：</strong></p>
+<ul>
+<li>为多种数据类型提供一种统一的表示方式。</li>
+<li>允许同一类型的数据采用不同的内部表示，从而在某些情况下尽量节省内存。</li>
+<li>支持对象共享和引用计数。当对象被共享的时候，只占用一份内存拷贝，进一步节省内存。</li>
+</ul>
+<h3 id="string-robj的编码过程"><a href="#string-robj的编码过程" class="headerlink" title="string robj的编码过程"></a>string robj的编码过程</h3><p>当我们执行Redis的set命令的时候，Redis首先将接收到的value值（string类型）表示成一个type = OBJ_STRING并且encoding = OBJ_ENCODING_RAW的robj对象，然后在存入内部存储之前先执行一个编码过程，试图将它表示成另一种更节省内存的encoding方式。这一过程的核心代码，是object.c中的tryObjectEncoding函数。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">robj *<span class="keyword">try</span><span class="constructor">ObjectEncoding(<span class="params">robj</span> <span class="operator">*</span><span class="params">o</span>)</span> &#123;</span><br><span class="line">    long value;</span><br><span class="line">    sds s = o-&gt;ptr;</span><br><span class="line">    size_t len;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Make sure this is a string object, the only type we encode</span></span><br><span class="line"><span class="comment">     * in this function. Other types use encoded memory efficient</span></span><br><span class="line"><span class="comment">     * representations but are handled by the commands implementing</span></span><br><span class="line"><span class="comment">     * the type. */</span></span><br><span class="line">    server<span class="constructor">AssertWithInfo(NULL,<span class="params">o</span>,<span class="params">o</span>-&gt;<span class="params">type</span> <span class="operator">==</span> OBJ_STRING)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* We try some specialized encoding only for objects that are</span></span><br><span class="line"><span class="comment">     * RAW or EMBSTR encoded, in other words objects that are still</span></span><br><span class="line"><span class="comment">     * in represented by an actually array of chars. */</span></span><br><span class="line">    <span class="keyword">if</span> (!sds<span class="constructor">EncodedObject(<span class="params">o</span>)</span>) return o;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* It&#x27;s not safe to encode shared objects: shared objects can be shared</span></span><br><span class="line"><span class="comment">     * everywhere in the &quot;object space&quot; of Redis and may end in places where</span></span><br><span class="line"><span class="comment">     * they are not handled. We handle them only as values in the keyspace. */</span></span><br><span class="line">     <span class="keyword">if</span> (o-&gt;refcount &gt; <span class="number">1</span>) return o;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Check if we can represent this string as a long integer.</span></span><br><span class="line"><span class="comment">     * Note that we are sure that a string larger than 21 chars is not</span></span><br><span class="line"><span class="comment">     * representable as a 32 nor 64 bit integer. */</span></span><br><span class="line">    len = sdslen(s);</span><br><span class="line">    <span class="keyword">if</span> (len &lt;= <span class="number">21</span><span class="operator"> &amp;&amp; </span>string2l(s,len,&amp;value)) &#123;</span><br><span class="line">        <span class="comment">/* This object is encodable as a long. Try to use a shared object.</span></span><br><span class="line"><span class="comment">         * Note that we avoid using shared integers when maxmemory is used</span></span><br><span class="line"><span class="comment">         * because every object needs to have a private LRU field for the LRU</span></span><br><span class="line"><span class="comment">         * algorithm to work well. */</span></span><br><span class="line">        <span class="keyword">if</span> ((server.maxmemory<span class="operator"> == </span><span class="number">0</span><span class="operator"> ||</span></span><br><span class="line"><span class="operator">             </span>(server.maxmemory_policy != MAXMEMORY_VOLATILE_LRU<span class="operator"> &amp;&amp;</span></span><br><span class="line"><span class="operator">              </span>server.maxmemory_policy != MAXMEMORY_ALLKEYS_LRU))<span class="operator"> &amp;&amp;</span></span><br><span class="line"><span class="operator">            </span>value &gt;= <span class="number">0</span><span class="operator"> &amp;&amp;</span></span><br><span class="line"><span class="operator">            </span>value &lt; OBJ_SHARED_INTEGERS)</span><br><span class="line">        &#123;</span><br><span class="line">            decr<span class="constructor">RefCount(<span class="params">o</span>)</span>;</span><br><span class="line">            incr<span class="constructor">RefCount(<span class="params">shared</span>.<span class="params">integers</span>[<span class="params">value</span>])</span>;</span><br><span class="line">            return shared.integers<span class="literal">[<span class="identifier">value</span>]</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (o-&gt;encoding<span class="operator"> == </span>OBJ_ENCODING_RAW) sdsfree(o-&gt;ptr);</span><br><span class="line">            o-&gt;encoding = OBJ_ENCODING_INT;</span><br><span class="line">            o-&gt;ptr = (void*) value;</span><br><span class="line">            return o;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* If the string is small and is still RAW encoded,</span></span><br><span class="line"><span class="comment">     * try the EMBSTR encoding which is more efficient.</span></span><br><span class="line"><span class="comment">     * In this representation the object and the SDS string are allocated</span></span><br><span class="line"><span class="comment">     * in the same chunk of memory to save space and cache misses. */</span></span><br><span class="line">    <span class="keyword">if</span> (len &lt;= OBJ_ENCODING_EMBSTR_SIZE_LIMIT) &#123;</span><br><span class="line">        robj *emb;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (o-&gt;encoding<span class="operator"> == </span>OBJ_ENCODING_EMBSTR) return o;</span><br><span class="line">        emb = create<span class="constructor">EmbeddedStringObject(<span class="params">s</span>,<span class="params">sdslen</span>(<span class="params">s</span>)</span>);</span><br><span class="line">        decr<span class="constructor">RefCount(<span class="params">o</span>)</span>;</span><br><span class="line">        return emb;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* We can&#x27;t encode the object...</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * Do the last try, and at least optimize the SDS string inside</span></span><br><span class="line"><span class="comment">     * the string object to require little space, in case there</span></span><br><span class="line"><span class="comment">     * is more than 10% of free space at the end of the SDS string.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * We do that only for relatively large strings as this branch</span></span><br><span class="line"><span class="comment">     * is only entered if the length of the string is greater than</span></span><br><span class="line"><span class="comment">     * OBJ_ENCODING_EMBSTR_SIZE_LIMIT. */</span></span><br><span class="line">    <span class="keyword">if</span> (o-&gt;encoding<span class="operator"> == </span>OBJ_ENCODING_RAW<span class="operator"> &amp;&amp;</span></span><br><span class="line"><span class="operator">        </span>sdsavail(s) &gt; len/<span class="number">10</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        o-&gt;ptr = sds<span class="constructor">RemoveFreeSpace(<span class="params">o</span>-&gt;<span class="params">ptr</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Return the original object. */</span></span><br><span class="line">    return o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码执行的操作比较复杂，我们有必要仔细看一下每一步的操作：</p>
+<ul>
+<li>第1步检查，检查type。确保只对string类型的对象进行操作。</li>
+<li>第2步检查，检查encoding。sdsEncodedObject是定义在server.h中的一个宏，确保只对OBJ_ENCODING_RAW和OBJ_ENCODING_EMBSTR编码的string对象进行操作。这两种编码的string都采用sds来存储，可以尝试进一步编码处理。</li>
+<li>第3步检查，检查refcount。引用计数大于1的共享对象，在多处被引用。由于编码过程结束后robj的对象指针可能会变化（我们在前一篇介绍sdscatlen函数的时候提到过类似这种接口使用模式），这样对于引用计数大于1的对象，就需要更新所有地方的引用，这不容易做到。因此，对于计数大于1的对象不做编码处理。</li>
+<li>试图将字符串转成64位的long。64位的long所能表达的数据范围是-2^63到2^63-1，用十进制表达出来最长是20位数（包括负号）。这里判断小于等于21，似乎是写多了，实际判断小于等于20就够了（如果我算错了请一定告诉我哦）。string2l如果将字符串转成long转成功了，那么会返回1并且将转好的long存到value变量里。</li>
+<li>在转成long成功时，又分为两种情况。<br>  第一种情况：如果Redis的配置不要求运行LRU替换算法，且转成的long型数字的值又比较小（小于OBJ_SHARED_INTEGERS，在目前的实现中这个值是10000），那么会使用共享数字对象来表示。之所以这里的判断跟LRU有关，是因为LRU算法要求每个robj有不同的lru字段值，所以用了LRU就不能共享robj。shared.integers是一个长度为10000的数组，里面预存了10000个小的数字对象。这些小数字对象都是encoding = OBJ_ENCODING_INT的string robj对象。<br>  第二种情况：如果前一步不能使用共享小对象来表示，那么将原来的robj编码成encoding = OBJ_ENCODING_INT，这时ptr字段直接存成这个long型的值。注意ptr字段本来是一个void *指针（即存储的是内存地址），因此在64位机器上有64位宽度，正好能存储一个64位的long型值。这样，除了robj本身之外，它就不再需要额外的内存空间来存储字符串值。</li>
+<li>接下来是对于那些不能转成64位long的字符串进行处理。最后再做两步处理：<br>  如果字符串长度足够小（小于等于OBJ_ENCODING_EMBSTR_SIZE_LIMIT，定义为44），那么调用createEmbeddedStringObject编码成encoding = OBJ_ENCODING_EMBSTR；<br>  如果前面所有的编码尝试都没有成功（仍然是OBJ_ENCODING_RAW），且sds里空余字节过多，那么做最后一次努力，调用sds的sdsRemoveFreeSpace接口来释放空余字节。</li>
+</ul>
+<p>其中调用的createEmbeddedStringObject，我们有必要看一下它的代码：</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">robj *createEmbeddedStringObject(const char *ptr, size_t len) &#123;</span><br><span class="line">    robj *o = zmalloc(sizeof(robj)+sizeof(struct sdshdr8)+len+<span class="number">1</span>);</span><br><span class="line">    struct sdshdr8 *sh = (void*)(o+<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="title">o</span>-&gt;</span>type = OBJ_STRING;</span><br><span class="line">    <span class="function"><span class="title">o</span>-&gt;</span>encoding = OBJ_ENCODING_EMBSTR;</span><br><span class="line">    <span class="function"><span class="title">o</span>-&gt;</span>ptr = sh+<span class="number">1</span>;</span><br><span class="line">    <span class="function"><span class="title">o</span>-&gt;</span>refcount = <span class="number">1</span>;</span><br><span class="line">    <span class="function"><span class="title">o</span>-&gt;</span>lru = LRU_CLOCK();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="title">sh</span>-&gt;</span>len = len;</span><br><span class="line">    <span class="function"><span class="title">sh</span>-&gt;</span>alloc = len;</span><br><span class="line">    <span class="function"><span class="title">sh</span>-&gt;</span>flags = SDS_TYPE_8;</span><br><span class="line">    <span class="keyword">if</span> (ptr) &#123;</span><br><span class="line">        <span class="function"><span class="title">memcpy</span>(sh-&gt;</span>buf,ptr,len);</span><br><span class="line">        <span class="function"><span class="title">sh</span>-&gt;</span>buf[len] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="function"><span class="title">memset</span>(sh-&gt;</span>buf,<span class="number">0</span>,len+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    return o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个连续的内存块中分配，这样对于短字符串的存储有利于减少内存碎片。这个连续的内存块包含如下几部分：</p>
+<ul>
+<li>16个字节的robj结构。</li>
+<li>3个字节的sdshdr8头。</li>
+<li>最多44个字节的sds字符数组。</li>
+<li>1个NULL结束符。</li>
+</ul>
+<p>加起来一共不超过64字节（16+3+44+1），因此这样的一个短字符串可以完全分配在一个64字节长度的内存块中。</p>
+<h3 id="string-robj的解码过程"><a href="#string-robj的解码过程" class="headerlink" title="string robj的解码过程"></a>string robj的解码过程</h3><p>当我们需要获取字符串的值，比如执行get命令的时候，我们需要执行与前面讲的编码过程相反的操作——解码。</p>
+<p>这一解码过程的核心代码，是object.c中的getDecodedObject函数。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">robj *get<span class="constructor">DecodedObject(<span class="params">robj</span> <span class="operator">*</span><span class="params">o</span>)</span> &#123;</span><br><span class="line">    robj *dec;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (sds<span class="constructor">EncodedObject(<span class="params">o</span>)</span>) &#123;</span><br><span class="line">        incr<span class="constructor">RefCount(<span class="params">o</span>)</span>;</span><br><span class="line">        return o;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (o-&gt;<span class="keyword">type</span><span class="operator"> == </span>OBJ_STRING<span class="operator"> &amp;&amp; </span>o-&gt;encoding<span class="operator"> == </span>OBJ_ENCODING_INT) &#123;</span><br><span class="line">        <span class="built_in">char</span> buf<span class="literal">[<span class="number">32</span>]</span>;</span><br><span class="line"></span><br><span class="line">        ll2string(buf,<span class="number">32</span>,(long)o-&gt;ptr);</span><br><span class="line">        dec = create<span class="constructor">StringObject(<span class="params">buf</span>,<span class="params">strlen</span>(<span class="params">buf</span>)</span>);</span><br><span class="line">        return dec;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        server<span class="constructor">Panic(<span class="string">&quot;Unknown encoding type&quot;</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个过程比较简单，需要我们注意的点有：</p>
+<ul>
+<li>编码为OBJ_ENCODING_RAW和OBJ_ENCODING_EMBSTR的字符串robj对象，不做变化，原封不动返回。站在使用者的角度，这两种编码没有什么区别，内部都是封装的sds。</li>
+<li>编码为数字的字符串robj对象，将long重新转为十进制字符串的形式，然后调用createStringObject转为sds的表示。注意：这里由long转成的sds字符串长度肯定不超过20，而根据createStringObject的实现，它们肯定会被编码成OBJ_ENCODING_EMBSTR的对象。createStringObject的代码如下：<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">robj *create<span class="constructor">StringObject(<span class="params">const</span> <span class="params">char</span> <span class="operator">*</span><span class="params">ptr</span>, <span class="params">size_t</span> <span class="params">len</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (len &lt;= OBJ_ENCODING_EMBSTR_SIZE_LIMIT)</span><br><span class="line">        return create<span class="constructor">EmbeddedStringObject(<span class="params">ptr</span>,<span class="params">len</span>)</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        return create<span class="constructor">RawStringObject(<span class="params">ptr</span>,<span class="params">len</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="再谈sds与string的关系"><a href="#再谈sds与string的关系" class="headerlink" title="再谈sds与string的关系"></a>再谈sds与string的关系</h3><p>在上一篇文章中，我们简单地提到了sds与string的关系；在本文介绍了robj的概念之后，我们重新总结一下sds与string的关系。</p>
+<ul>
+<li>确切地说，string在Redis中是用一个robj来表示的。</li>
+<li>用来表示string的robj可能编码成3种内部表示：OBJ_ENCODING_RAW, OBJ_ENCODING_EMBSTR, OBJ_ENCODING_INT。其中前两种编码使用的是sds来存储，最后一种OBJ_ENCODING_INT编码直接把string存成了long型。</li>
+<li>在对string进行incr, decr等操作的时候，如果它内部是OBJ_ENCODING_INT编码，那么可以直接进行加减操作；如果它内部是OBJ_ENCODING_RAW或OBJ_ENCODING_EMBSTR编码，那么Redis会先试图把sds存储的字符串转成long型，如果能转成功，再进行加减操作。</li>
+<li>对一个内部表示成long型的string执行append, setbit, getrange这些命令，针对的仍然是string的值（即十进制表示的字符串），而不是针对内部表示的long型进行操作。比如字符串”32”，如果按照字符数组来解释，它包含两个字符，它们的ASCII码分别是0x33和0x32。当我们执行命令setbit key 7 0的时候，相当于把字符0x33变成了0x32，这样字符串的值就变成了”22”。而如果将字符串”32”按照内部的64位long型来解释，那么它是0x0000000000000020，在这个基础上执行setbit位操作，结果就完全不对了。因此，在这些命令的实现中，会把long型先转成字符串再进行相应的操作。由于篇幅原因，这三个命令的实现代码这里就不详细介绍了，有兴趣的读者可以参考Redis源码：<br>  t_string.c中的appendCommand函数；<br>  biops.c中的setbitCommand函数；<br>  t_string.c中的getrangeCommand函数。</li>
+</ul>
+<p>值得一提的是，append和setbit命令的实现中，都会最终调用到db.c中的dbUnshareStringValue函数，将string对象的内部编码转成OBJ_ENCODING_RAW的（只有这种编码的robj对象，其内部的sds 才能在后面自由追加新的内容），并解除可能存在的对象共享状态。这里面调用了前面提到的getDecodedObject。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">robj *db<span class="constructor">UnshareStringValue(<span class="params">redisDb</span> <span class="operator">*</span><span class="params">db</span>, <span class="params">robj</span> <span class="operator">*</span><span class="params">key</span>, <span class="params">robj</span> <span class="operator">*</span><span class="params">o</span>)</span> &#123;</span><br><span class="line">    server<span class="constructor">Assert(<span class="params">o</span>-&gt;<span class="params">type</span> <span class="operator">==</span> OBJ_STRING)</span>;</span><br><span class="line">    <span class="keyword">if</span> (o-&gt;refcount != <span class="number">1</span><span class="operator"> || </span>o-&gt;encoding != OBJ_ENCODING_RAW) &#123;</span><br><span class="line">        robj *decoded = get<span class="constructor">DecodedObject(<span class="params">o</span>)</span>;</span><br><span class="line">        o = create<span class="constructor">RawStringObject(<span class="params">decoded</span>-&gt;<span class="params">ptr</span>, <span class="params">sdslen</span>(<span class="params">decoded</span>-&gt;<span class="params">ptr</span>)</span>);</span><br><span class="line">        decr<span class="constructor">RefCount(<span class="params">decoded</span>)</span>;</span><br><span class="line">        db<span class="constructor">Overwrite(<span class="params">db</span>,<span class="params">key</span>,<span class="params">o</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    return o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="robj的引用计数操作"><a href="#robj的引用计数操作" class="headerlink" title="robj的引用计数操作"></a>robj的引用计数操作</h3><p>将robj的引用计数加1和减1的操作，定义在object.c中：</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="literal">void</span> incrRefCount(robj *o) &#123;</span><br><span class="line">    o-&gt;refcount++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="literal">void</span> decrRefCount(robj *o) &#123;</span><br><span class="line">    <span class="keyword">if</span> (o-&gt;refcount &lt;= <span class="number">0</span>) serverPanic(<span class="string">&quot;decrRefCount against refcount &lt;= 0&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (o-&gt;refcount == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span>(o-&gt;type) &#123;</span><br><span class="line">        <span class="keyword">case</span> OBJ_STRING: freeStringObject(o); <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> OBJ_LIST: freeListObject(o); <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> OBJ_SET: freeSetObject(o); <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> OBJ_ZSET: freeZsetObject(o); <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> OBJ_HASH: freeHashObject(o); <span class="keyword">break</span>;</span><br><span class="line">        default: serverPanic(<span class="string">&quot;Unknown object type&quot;</span>); <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        zfree(o);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        o-&gt;refcount--;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们特别关注一下将引用计数减1的操作decrRefCount。如果只剩下最后一个引用了（refcount已经是1了），那么在decrRefCount被调用后，整个robj将被释放。</p>
+<p>注意：Redis的del命令就依赖<code>decrRefCount</code>操作将value释放掉。</p>
+<hr>
+<p>经过了本文的讨论，我们很容易看出，robj所表示的就是Redis对外暴露的第一层面的数据结构：string, list, hash, set, sorted set，而每一种数据结构的底层实现所对应的是哪个（或哪些）第二层面的数据结构（dict, sds, ziplist, quicklist, skiplist, 等），则通过不同的encoding来区分。可以说，robj是联结两个层面的数据结构的桥梁。</p>
+<p>本文详细介绍了OBJ_STRING类型的字符串对象的底层实现，其编码和解码过程在Redis里非常重要，应用广泛，我们在后面的讨论中可能还会遇到。现在有了robj的概念基础，我们下一篇会讨论ziplist，以及它与hash的关系。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-3-robj/" title="redis内部数据结构(3)--robj" target="_blank" rel="external">https://utinner.gitee.io/2020/11/26/redis内部数据结构-3-robj/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/utinner" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/utinner" target="_blank"><span class="text-dark">靳平</span><small class="ml-1x">北漂程序员</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-4-ziplist/" title="redis内部数据结构(4)-ziplist"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/" title="redis内部数据结构(2)--sds"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="qq,wechat" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<!-- custom analytics part create by xiamo -->
+<script defer src="https://cdn1.lncld.net/static/js/av-min-1.2.1.js"></script>
+<script defer>
+AV.init({
+  appId: 'BNPHGqdExiXaEZFh4AgOPmmu-gzGzoHsz',
+  appKey: 's3p79Nt6MZRbWf5rPoOj9DES'
+});
+
+function showTime(Counter) {
+	var query = new AV.Query(Counter);
+		var visitors= $('.leancloud_visitors');
+		query.greaterThanOrEqualTo("time", 0);		
+		query.find({
+			success: function(results) {
+				if (results.length == 0) {				
+					return;
+				}
+				var data = results;
+				visitors.each(function(){
+					var url = $(this).attr('id').trim();					
+					for (var i = 0; i < data.length; i++) {
+						var object = data[i];
+						var content = object.get('time');
+						var _url = object.get('url')
+						if(url == _url){
+							$(this).text(content);
+						}
+					}
+				})
+				
+			},
+			error: function(object, error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+}
+
+function addCount(Counter) {
+	var Counter = AV.Object.extend("Counter");
+	url = $(".leancloud_visitors").attr('id').trim();
+	title = $(".leancloud_visitors").attr('data-flag-title').trim();
+	var query = new AV.Query(Counter);
+	query.equalTo("url", url);
+	query.find({
+		success: function(results) {
+			if (results.length > 0) {
+				var counter = results[0];
+				counter.fetchWhenSave(true);
+				counter.increment("time");
+				counter.save(null, {
+					success: function(counter) {
+						var content = counter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(counter, error) {
+						console.log('Failed to save Visitor num, with error message: ' + error.message);
+					}
+				});
+			} else {
+				var newcounter = new Counter();
+				newcounter.set("title", title);
+				newcounter.set("url", url);
+				newcounter.set("time", 1);
+				newcounter.save(null, {
+					success: function(newcounter) {
+					    console.log("newcounter.get('time')="+newcounter.get('time'));
+						var content = newcounter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(newcounter, error) {
+						console.log('Failed to create');
+					}
+				});
+			}
+		},
+		error: function(error) {
+			console.log('Error:' + error.code + " " + error.message);
+		}
+	});
+}
+$(function() {
+	var Counter = AV.Object.extend("Counter");
+	if ($('.leancloud_visitors').length == 1) {
+		addCount(Counter);
+	} else {
+		showTime(Counter);
+	}
+}); 
+</script>
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

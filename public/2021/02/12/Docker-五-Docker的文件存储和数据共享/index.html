@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Docker(五)-Docker的文件存储和数据共享 | 靳平の博客</title>
+  <meta name="description" content="问题 当我创建了一个容器，在这个容器中我有个mysql服务，在这个mysql里面我有各种各样的数据。但是有一天我一不小心删除了这个容器，那么这个容器中的相关服务以及数据也都没有了。这个时候就出问题了。 我们需要一种数据持久化机制来实现我们容器中数据的存储。  默认情况下docker数据是写在了container里面的，当我们将容器删除掉之后是找不到这个容器里面的文件及恢复的，那么我们可以用一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker(五)-Docker的文件存储和数据共享">
+<meta property="og:url" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/index.html">
+<meta property="og:site_name" content="代码乐园">
+<meta property="og:description" content="问题 当我创建了一个容器，在这个容器中我有个mysql服务，在这个mysql里面我有各种各样的数据。但是有一天我一不小心删除了这个容器，那么这个容器中的相关服务以及数据也都没有了。这个时候就出问题了。 我们需要一种数据持久化机制来实现我们容器中数据的存储。  默认情况下docker数据是写在了container里面的，当我们将容器删除掉之后是找不到这个容器里面的文件及恢复的，那么我们可以用一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/1.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/2.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/3.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/4.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/5.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/5.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/6.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/7.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/8.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/9.png">
+<meta property="article:published_time" content="2021-02-11T19:59:13.000Z">
+<meta property="article:modified_time" content="2021-12-06T09:23:00.674Z">
+<meta property="article:author" content="JinPing">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="代码乐园" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/utinner" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">靳平</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">北漂程序员</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Beijing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>持续更新中，欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E8%AE%B0/">生活小记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E5%91%98/">程序员</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法和数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IO/" rel="tag">IO</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/" rel="tag">MongoDB</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http%EF%BC%8Cssl/" rel="tag">http，ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="tag">内存模型</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" rel="tag">定时任务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%99%AE/" rel="tag">科普</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" rel="tag">考研英语</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" rel="tag">音视频行业</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Docker/" style="font-size: 13.67px;">Docker</a> <a href="/tags/Flink/" style="font-size: 13.17px;">Flink</a> <a href="/tags/IO/" style="font-size: 13px;">IO</a> <a href="/tags/JVM/" style="font-size: 13.67px;">JVM</a> <a href="/tags/Java/" style="font-size: 13.5px;">Java</a> <a href="/tags/Java%E5%9F%BA%E7%A1%80/" style="font-size: 13.17px;">Java基础</a> <a href="/tags/Maven/" style="font-size: 13px;">Maven</a> <a href="/tags/MongoDB/" style="font-size: 13.17px;">MongoDB</a> <a href="/tags/Mysql/" style="font-size: 13.17px;">Mysql</a> <a href="/tags/Spring/" style="font-size: 13px;">Spring</a> <a href="/tags/SpringCloud/" style="font-size: 13.33px;">SpringCloud</a> <a href="/tags/git/" style="font-size: 13.17px;">git</a> <a href="/tags/http%EF%BC%8Cssl/" style="font-size: 13px;">http，ssl</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">内存模型</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 13px;">分布式</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 13.17px;">基础知识</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 13px;">多线程</a> <a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 13px;">定时任务</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 13px;">生活</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 13px;">科普</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a> <a href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" style="font-size: 13.83px;">考研英语</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 13.33px;">面试题</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" style="font-size: 13px;">音视频行业</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E8%AE%B0/">生活小记</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/15/%E5%B0%8F%E8%AE%B0/" class="title">小记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/10/%E5%AE%8C%E5%BD%A2%E5%A1%AB%E7%A9%BA/" class="title">完形填空</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-10T09:06:34.000Z" itemprop="datePublished">2021-11-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/09/%E8%8B%B1%E8%AF%AD%E5%90%8E%E7%BC%80/" class="title">英语后缀</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-09T05:57:52.000Z" itemprop="datePublished">2021-11-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/08/%E9%A2%9D%E5%A4%96%E7%9A%84%E8%AF%8D%E6%A0%B9/" class="title">额外的词根</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Docker-五-Docker的文件存储和数据共享" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Docker(五)-Docker的文件存储和数据共享
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/" class="article-date">
+	  <time datetime="2021-02-11T19:59:13.000Z" itemprop="datePublished">2021-02-12</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Docker/" rel="tag">Docker</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/" class="leancloud_visitors"  data-flag-title="Docker(五)-Docker的文件存储和数据共享">0</span>
+    </span>
+
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <meta name="referrer" content="no-referrer" />
+
+
+<p><strong>问题</strong></p>
+<p>当我创建了一个容器，在这个容器中我有个mysql服务，在这个mysql里面我有各种各样的数据。但是有一天我一不小心删除了这个容器，那么这个容器中的相关服务以及数据也都没有了。这个时候就出问题了。</p>
+<p>我们需要一种数据持久化机制来实现我们容器中数据的存储。</p>
+<p><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/1.png" alt="1"></p>
+<p>默认情况下docker数据是写在了container里面的，当我们将容器删除掉之后是找不到这个容器里面的文件及恢复的，那么我们可以用一种机制类似于mock的方式去将容器中的数据保存在我们的磁盘上，这样就跟容器隔离开了，进而实现数据持久化。</p>
+<span id="more"></span>
+
+<h3 id="Docker持久化数据的两种方案"><a href="#Docker持久化数据的两种方案" class="headerlink" title="Docker持久化数据的两种方案"></a>Docker持久化数据的两种方案</h3><ul>
+<li>基于本地文件系统的Volume。可以在执行Docker create或Docker run时，通过-v参数将主机的目录作为容器的数据卷。这部分功能便是基于本地文件系统的volume管理。</li>
+<li>基于plugin的Volume，支持第三方的存储方案，比如NAS、aws</li>
+</ul>
+<h3 id="Volume的类型"><a href="#Volume的类型" class="headerlink" title="Volume的类型"></a>Volume的类型</h3><ul>
+<li>受管理的data Volome，由docker后台自动创建</li>
+<li>绑定挂载的Volome，具体挂载的位置可以由用户指定</li>
+</ul>
+<h4 id="小插曲"><a href="#小插曲" class="headerlink" title="小插曲"></a>小插曲</h4><p>我需要从我本地拷贝几份文件到vagrant的虚拟机中，需要安装vagrant的scp插件<code>vagrant plugin install scp</code>。</p>
+<p><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/2.png" alt="2"></p>
+<ul>
+<li>将本地文件拷贝到虚拟机指定目录中<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vagrant scp <span class="tag">&lt;<span class="name">目标文件夹路径</span>&gt;</span> vmName:<span class="tag">&lt;<span class="name">虚拟机内文件夹路径</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li>注意：&lt;虚拟机内文件夹路径&gt;需要预先开通777权限<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo</span> chmod <span class="number">777</span> &lt;虚拟机内文件夹路径&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="Data-Volume"><a href="#Data-Volume" class="headerlink" title="Data Volume"></a>Data Volume</h3><p>1.进入虚拟机，查看volume：<br><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/3.png" alt="3"></p>
+<p>2.创建一个不需要密码登录的mysql应用</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="built_in">run</span> -d --name mysql1 -e <span class="attribute">MYSQL_ALLOW_EMPTY_PASSWORD</span>=<span class="literal">true</span> mysql</span><br></pre></td></tr></table></figure>
+<p>3.查看volume相关信息<br><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/4.png" alt="4"><br>可以看到它这个volume映射到了虚拟机内部的路径上去</p>
+<p>4.再去创建另一个mysql</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="built_in">run</span> -d --name mysql2 -e <span class="attribute">MYSQL_ALLOW_EMPTY_PASSWORD</span>=<span class="literal">true</span> mysql</span><br></pre></td></tr></table></figure>
+<p>再去查看volume可以看到多了一个<br><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/5.png" alt="5"></p>
+<p>5.现在我去停止并且remove掉两个容器</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">rm</span> <span class="operator">-f</span> mysql1 mysql2</span><br></pre></td></tr></table></figure>
+<p>可以发现但是他们的volume还在<br><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/5.png" alt="5"></p>
+<p><strong>但是又有第二个问题，我们的volume的名字并不是特别友好， 我可以给volume起个别名</strong></p>
+<p>6.删除这两个volume</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="keyword">volume</span><span class="language-bash"> <span class="built_in">rm</span> &lt;<span class="built_in">id</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>7.重新创建，指定别名为mysql</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="built_in">run</span> -d -v mysql:/var/lib/mysql --name mysql1 -e <span class="attribute">MYSQL_ALLOW_EMPTY_PASSWORD</span>=<span class="literal">true</span> mysql</span><br></pre></td></tr></table></figure>
+<p><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/6.png" alt="6"></p>
+<p>可以看到有一个mysql的volume</p>
+<p>我们的数据都会同步到这个volume里面去</p>
+<h5 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h5><ul>
+<li><p>进入到mysql1中</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="built_in">exec</span> -it mysql1 /bin/bash</span><br><span class="line">mysql -u root</span><br><span class="line"><span class="keyword">create</span> database docker;</span><br><span class="line"><span class="keyword">show</span> databases;</span><br></pre></td></tr></table></figure>
+<p><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/7.png" alt="7"></p>
+</li>
+<li><p>然后退出容器</p>
+</li>
+<li><p>强制删除mysql1</p>
+</li>
+<li><p>创建mysql3，使用这个volume</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="built_in">run</span> -d -v mysql:/var/lib/mysql --name mysql3 -e <span class="attribute">MYSQL_ALLOW_EMPTY_PASSWORD</span>=<span class="literal">true</span> mysql</span><br></pre></td></tr></table></figure></li>
+<li><p>进入容器，可以看到mysql3中有docker这个数据库<br><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/8.png" alt="8"></p>
+</li>
+</ul>
+<h3 id="bind-Mounting做地址映射"><a href="#bind-Mounting做地址映射" class="headerlink" title="bind Mounting做地址映射"></a>bind Mounting做地址映射</h3><p>只需要在运行容器的时候去指定我们本地的目录和容器的目录的一一对应关系，通过这种方式可以去同步，让我们本地的目录文件和容器的目录文件是同步的。本质是同一个文件同一个目录做映射。</p>
+<p>我这里有个脚本文件Dockerfile</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># this same shows how we can extend/change an existing official image from Docker Hub</span></span><br><span class="line"></span><br><span class="line">FROM nginx:latest</span><br><span class="line"><span class="comment"># highly recommend you always pin versions for anything beyond dev/learn</span></span><br><span class="line"></span><br><span class="line">WORKDIR <span class="regexp">/usr/</span>share<span class="regexp">/nginx/</span>html</span><br><span class="line"><span class="comment"># change working directory to root of nginx webhost</span></span><br><span class="line"><span class="comment"># using WORKDIR is prefered to using &#x27;RUN cd /some/path&#x27;</span></span><br><span class="line"></span><br><span class="line">COPY index.html index.html</span><br><span class="line"></span><br><span class="line"><span class="comment"># I don&#x27;t have to specify EXPOSE or CMD because they&#x27;re in my FROM</span></span><br></pre></td></tr></table></figure>
+
+<p>其实就是创建一个nginx服务，然后将我自定义的index.html覆盖到nginx中<br>构建：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t tinner/mynginx .</span><br></pre></td></tr></table></figure>
+<p>做端口映射：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">docker</span> run -d -p <span class="number">80</span>:<span class="number">80</span> --name web tinner/mynginx</span><br></pre></td></tr></table></figure>
+<p>然后curl 127.0.0.1<br>可以看到首页就是我写的index.html</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!doctype <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Hello Docker! <span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在本地输入(我的虚拟机ip)：<a target="_blank" rel="noopener" href="http://192.168.205.10/%EF%BC%8C%E5%90%8C%E6%A0%B7%E4%B9%9F%E8%83%BD%E7%9C%8B%E5%88%B0%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2">http://192.168.205.10/，同样也能看到自定义页面</a><br><img src="Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/9.png" alt="9"></p>
+<p>然后删除这个容器</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">rm</span> <span class="operator">-f</span> web</span><br></pre></td></tr></table></figure>
+
+<h4 id="用bind-Mounting进行映射"><a href="#用bind-Mounting进行映射" class="headerlink" title="用bind Mounting进行映射"></a>用bind Mounting进行映射</h4><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -v <span class="variable">$(</span>pwd)<span class="symbol">:/usr/share/nginx/html</span> -p <span class="number">80</span><span class="symbol">:</span><span class="number">80</span> --name web tinner/mynginx</span><br></pre></td></tr></table></figure>
+
+<p>主要是-v参数，$(pwd)就是我当前虚拟机的目录，冒号后面就是我创建出来的容器的指定目录要与$(pwd)目录进行映射。</p>
+<p>然后进入容器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it web /bin/bash</span><br><span class="line"><span class="built_in">touch</span> docker.txt</span><br></pre></td></tr></table></figure>
+<p>退出容器，可以看到在虚拟机内部也生成了一个docker.txt文件，同时在我本地也有一份</p>
+<p>这是因为我在构建vagrant的时候指定了</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Vagrant</span>.require_version <span class="string">&quot;&gt;= 1.6.0&quot;</span></span><br><span class="line"></span><br><span class="line">boxes = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="symbol">:name</span> =&gt; <span class="string">&quot;docker-host&quot;</span>,</span><br><span class="line">        <span class="symbol">:eth1</span> =&gt; <span class="string">&quot;192.168.205.31&quot;</span>,</span><br><span class="line">        <span class="symbol">:mem</span> =&gt; <span class="string">&quot;1024&quot;</span>,</span><br><span class="line">        <span class="symbol">:cpu</span> =&gt; <span class="string">&quot;1&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="title class_">Vagrant</span>.configure(<span class="number">2</span>) <span class="keyword">do</span> |config|</span><br><span class="line"></span><br><span class="line">  config.vm.box = <span class="string">&quot;centos/7&quot;</span></span><br><span class="line">  boxes.each <span class="keyword">do</span> |opts|</span><br><span class="line">    config.vm.define opts[<span class="symbol">:name</span>] <span class="keyword">do</span> |config|</span><br><span class="line">      config.vm.hostname = opts[<span class="symbol">:name</span>]</span><br><span class="line">      config.vm.provider <span class="string">&quot;vmware_fusion&quot;</span> <span class="keyword">do</span> |v|</span><br><span class="line">        v.vmx[<span class="string">&quot;memsize&quot;</span>] = opts[<span class="symbol">:mem</span>]</span><br><span class="line">        v.vmx[<span class="string">&quot;numvcpus&quot;</span>] = opts[<span class="symbol">:cpu</span>]</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">      config.vm.provider <span class="string">&quot;virtualbox&quot;</span> <span class="keyword">do</span> |v|</span><br><span class="line">        v.customize [<span class="string">&quot;modifyvm&quot;</span>, <span class="symbol">:id</span>, <span class="string">&quot;--memory&quot;</span>, opts[<span class="symbol">:mem</span>]]</span><br><span class="line">        v.customize [<span class="string">&quot;modifyvm&quot;</span>, <span class="symbol">:id</span>, <span class="string">&quot;--cpus&quot;</span>, opts[<span class="symbol">:cpu</span>]]</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">      config.vm.network <span class="symbol">:private_network</span>, <span class="symbol">ip:</span> opts[<span class="symbol">:eth1</span>]</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  config.vm.synced_folder <span class="string">&quot;./labs&quot;</span>, <span class="string">&quot;/home/vagrant/labs&quot;</span></span><br><span class="line">  config.vm.provision <span class="string">&quot;shell&quot;</span>, <span class="symbol">privileged:</span> <span class="literal">true</span>, <span class="symbol">path:</span> <span class="string">&quot;./setup.sh&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>在倒数第三行，进行了文件的映射，将本地的labs文件夹映射到了我构建出来的虚拟机的”/home/vagrant/labs”目录下，同时，在虚拟机中构建nginx容器的时候，也指定了文件映射，这三处地方实现了映射，进而实现了数据的存储</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">config</span>.vm.<span class="keyword">synced_folder </span><span class="string">&quot;./labs&quot;</span>, <span class="string">&quot;/home/vagrant/labs&quot;</span></span><br></pre></td></tr></table></figure>
+<p>同时，用这种方式可以实现在我们开发过程中同步查看一些改动</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://utinner.gitee.io/2021/02/12/Docker-%E4%BA%94-Docker%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E5%92%8C%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/" title="Docker(五)-Docker的文件存储和数据共享" target="_blank" rel="external">https://utinner.gitee.io/2021/02/12/Docker-五-Docker的文件存储和数据共享/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/utinner" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/utinner" target="_blank"><span class="text-dark">靳平</span><small class="ml-1x">北漂程序员</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/02/15/Docker-%E5%85%AD-DockerCompose/" title="Docker(六)DockerCompose"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/" title="Docker(四)Docker的网络空间"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="qq,wechat" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<!-- custom analytics part create by xiamo -->
+<script defer src="https://cdn1.lncld.net/static/js/av-min-1.2.1.js"></script>
+<script defer>
+AV.init({
+  appId: 'BNPHGqdExiXaEZFh4AgOPmmu-gzGzoHsz',
+  appKey: 's3p79Nt6MZRbWf5rPoOj9DES'
+});
+
+function showTime(Counter) {
+	var query = new AV.Query(Counter);
+		var visitors= $('.leancloud_visitors');
+		query.greaterThanOrEqualTo("time", 0);		
+		query.find({
+			success: function(results) {
+				if (results.length == 0) {				
+					return;
+				}
+				var data = results;
+				visitors.each(function(){
+					var url = $(this).attr('id').trim();					
+					for (var i = 0; i < data.length; i++) {
+						var object = data[i];
+						var content = object.get('time');
+						var _url = object.get('url')
+						if(url == _url){
+							$(this).text(content);
+						}
+					}
+				})
+				
+			},
+			error: function(object, error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+}
+
+function addCount(Counter) {
+	var Counter = AV.Object.extend("Counter");
+	url = $(".leancloud_visitors").attr('id').trim();
+	title = $(".leancloud_visitors").attr('data-flag-title').trim();
+	var query = new AV.Query(Counter);
+	query.equalTo("url", url);
+	query.find({
+		success: function(results) {
+			if (results.length > 0) {
+				var counter = results[0];
+				counter.fetchWhenSave(true);
+				counter.increment("time");
+				counter.save(null, {
+					success: function(counter) {
+						var content = counter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(counter, error) {
+						console.log('Failed to save Visitor num, with error message: ' + error.message);
+					}
+				});
+			} else {
+				var newcounter = new Counter();
+				newcounter.set("title", title);
+				newcounter.set("url", url);
+				newcounter.set("time", 1);
+				newcounter.save(null, {
+					success: function(newcounter) {
+					    console.log("newcounter.get('time')="+newcounter.get('time'));
+						var content = newcounter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(newcounter, error) {
+						console.log('Failed to create');
+					}
+				});
+			}
+		},
+		error: function(error) {
+			console.log('Error:' + error.code + " " + error.message);
+		}
+	});
+}
+$(function() {
+	var Counter = AV.Object.extend("Counter");
+	if ($('.leancloud_visitors').length == 1) {
+		addCount(Counter);
+	} else {
+		showTime(Counter);
+	}
+}); 
+</script>
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

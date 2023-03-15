@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>面试准备 | 靳平の博客</title>
+  <meta name="description" content="一.基础1.hashmapHashMap是基于哈希表的Map接口的非同步实现。此实现提供所有可选的映射操作，并且允许null键和null值。不保证顺序。 1.1 7与8的区别hashmap初始容量都是16，扩容因子是0.75倍.当元素的数量达到了16*0.75&#x3D;12的时候，会进行扩容。底层：数组+链表。数组中的元素存放的是entry的引用  jdk8中会将链表转化为红黑树（红黑树的查询插入效率">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试准备">
+<meta property="og:url" content="https://utinner.gitee.io/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
+<meta property="og:site_name" content="代码乐园">
+<meta property="og:description" content="一.基础1.hashmapHashMap是基于哈希表的Map接口的非同步实现。此实现提供所有可选的映射操作，并且允许null键和null值。不保证顺序。 1.1 7与8的区别hashmap初始容量都是16，扩容因子是0.75倍.当元素的数量达到了16*0.75&#x3D;12的时候，会进行扩容。底层：数组+链表。数组中的元素存放的是entry的引用  jdk8中会将链表转化为红黑树（红黑树的查询插入效率">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://utinner.gitee.io/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/%E9%9D%A2%E8%AF%95%E9%A2%98/concurrent1">
+<meta property="og:image" content="https://utinner.gitee.io/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/%E9%9D%A2%E8%AF%95%E9%A2%98/1.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/%E9%9D%A2%E8%AF%95%E9%A2%98/2.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/%E9%9D%A2%E8%AF%95%E9%A2%98/5.png">
+<meta property="article:published_time" content="2020-10-22T16:45:13.000Z">
+<meta property="article:modified_time" content="2021-12-06T09:23:00.938Z">
+<meta property="article:author" content="JinPing">
+<meta property="article:tag" content="面试题">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://utinner.gitee.io/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/%E9%9D%A2%E8%AF%95%E9%A2%98/concurrent1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://utinner.gitee.io/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="代码乐园" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/utinner" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">靳平</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">北漂程序员</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Beijing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>持续更新中，欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E8%AE%B0/">生活小记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E5%91%98/">程序员</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法和数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IO/" rel="tag">IO</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/" rel="tag">MongoDB</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http%EF%BC%8Cssl/" rel="tag">http，ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="tag">内存模型</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" rel="tag">定时任务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%99%AE/" rel="tag">科普</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" rel="tag">考研英语</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" rel="tag">音视频行业</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Docker/" style="font-size: 13.67px;">Docker</a> <a href="/tags/Flink/" style="font-size: 13.17px;">Flink</a> <a href="/tags/IO/" style="font-size: 13px;">IO</a> <a href="/tags/JVM/" style="font-size: 13.67px;">JVM</a> <a href="/tags/Java/" style="font-size: 13.5px;">Java</a> <a href="/tags/Java%E5%9F%BA%E7%A1%80/" style="font-size: 13.17px;">Java基础</a> <a href="/tags/Maven/" style="font-size: 13px;">Maven</a> <a href="/tags/MongoDB/" style="font-size: 13.17px;">MongoDB</a> <a href="/tags/Mysql/" style="font-size: 13.17px;">Mysql</a> <a href="/tags/Spring/" style="font-size: 13px;">Spring</a> <a href="/tags/SpringCloud/" style="font-size: 13.33px;">SpringCloud</a> <a href="/tags/git/" style="font-size: 13.17px;">git</a> <a href="/tags/http%EF%BC%8Cssl/" style="font-size: 13px;">http，ssl</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">内存模型</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 13px;">分布式</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 13.17px;">基础知识</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 13px;">多线程</a> <a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 13px;">定时任务</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 13px;">生活</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 13px;">科普</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a> <a href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" style="font-size: 13.83px;">考研英语</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 13.33px;">面试题</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" style="font-size: 13px;">音视频行业</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E8%AE%B0/">生活小记</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/15/%E5%B0%8F%E8%AE%B0/" class="title">小记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/10/%E5%AE%8C%E5%BD%A2%E5%A1%AB%E7%A9%BA/" class="title">完形填空</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-10T09:06:34.000Z" itemprop="datePublished">2021-11-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/09/%E8%8B%B1%E8%AF%AD%E5%90%8E%E7%BC%80/" class="title">英语后缀</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-09T05:57:52.000Z" itemprop="datePublished">2021-11-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/08/%E9%A2%9D%E5%A4%96%E7%9A%84%E8%AF%8D%E6%A0%B9/" class="title">额外的词根</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-面试题" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      面试准备
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/" class="article-date">
+	  <time datetime="2020-10-22T16:45:13.000Z" itemprop="datePublished">2020-10-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/" class="leancloud_visitors"  data-flag-title="面试准备">0</span>
+    </span>
+
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <meta name="referrer" content="no-referrer" />
+
+<h1 id="一-基础"><a href="#一-基础" class="headerlink" title="一.基础"></a>一.基础</h1><h2 id="1-hashmap"><a href="#1-hashmap" class="headerlink" title="1.hashmap"></a>1.hashmap</h2><p>HashMap是基于哈希表的Map接口的非同步实现。此实现提供所有可选的映射操作，并且允许null键和null值。不保证顺序。</p>
+<h3 id="1-1-7与8的区别"><a href="#1-1-7与8的区别" class="headerlink" title="1.1 7与8的区别"></a>1.1 7与8的区别</h3><p>hashmap初始容量都是16，扩容因子是0.75倍.当元素的数量达到了<code>16*0.75=12</code>的时候，会进行扩容。<br>底层：数组+链表。数组中的元素存放的是entry的引用</p>
+<ul>
+<li>jdk8中会将链表转化为红黑树（红黑树的查询插入效率介于链表和二叉树之间）</li>
+<li>新节点插入链表的顺序不同（jdk7是插入头节点，jdk8因为要遍历链表把链表变为红黑树所以采用插入尾结点）</li>
+<li>hash算法简化。因为使用了红黑树，即使散列不均匀查询效率也不会很低。</li>
+<li>resize的逻辑修改（jdk7会出现死循环，jdk8不会），resize方法完成了初始化和扩容。</li>
+</ul>
+<span id="more"></span>
+<blockquote>
+<p>1.在put的时候一开始初始化的时候要用比阈值大的2的次方数。</p>
+</blockquote>
+<blockquote>
+<p>2.在hash算法中，首先对其key的hashcode进行抑或操作，目的就是控制散列值在数组size中，但是在抑或之后还要对key的hashcode进行右移，目的就是让其高位参与运算，使得散列更为均匀。</p>
+</blockquote>
+<blockquote>
+<p>3.jdk1.7中在对hashmap进行扩容的时候，由于使用的是头插法，就可能会导致出现死循环的问题，发生死锁。因为1.7是循环遍历，1.8是先判断元素是要放在高位还是低位，然后将low的元素和high的元素分别组合起来放到新的扩容数组中</p>
+</blockquote>
+<blockquote>
+<p>4.jdk1.8当hash相同的链表中的node超过阈值（8）的时候并且数组的长度小于64的时候，会进行扩容；如果数组的长度大于64，会将当前下标指向的这个链表转化为红黑树。</p>
+</blockquote>
+<blockquote>
+<p>5.链表转化为红黑树：先比较key的hashcode；如果相同则去看key有没有实现comparable接口，如果实现了则进行比较；如果没有实现或者相同，则会比较key的class的名字；如果key的className相同则会调同<code>System.identityHashcode</code>方法去进行比较jvm内部的hashcode。然后根据插入的元素进行红黑树root节点的调整。一个node节点既是红黑树的节点，同时也是双向链表的节点，因为它继承了hashmap的entry类。扩容的时候遍历双向链表，同样先判断元素是要放在高位还是低位.</p>
+</blockquote>
+<h3 id="1-2遍历方式"><a href="#1-2遍历方式" class="headerlink" title="1.2遍历方式"></a>1.2遍历方式</h3><figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Iterator&lt;<span class="built_in">Map</span>.Entry&lt;<span class="built_in">String</span>, <span class="built_in">Integer</span>&gt;&gt; entryIterator = <span class="built_in">map</span>.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (entryIterator.hasNext()) &#123;</span><br><span class="line">            <span class="built_in">Map</span>.Entry&lt;<span class="built_in">String</span>, <span class="built_in">Integer</span>&gt; next = entryIterator.next();</span><br><span class="line">            System.out.println(<span class="string">&quot;key=&quot;</span> + next.getKey() + <span class="string">&quot; value=&quot;</span> + next.getValue());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">Iterator&lt;<span class="built_in">String</span>&gt; iterator = <span class="built_in">map</span>.keySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext())&#123;</span><br><span class="line">            <span class="built_in">String</span> key = iterator.next();</span><br><span class="line">            System.out.println(<span class="string">&quot;key=&quot;</span> + key + <span class="string">&quot; value=&quot;</span> + <span class="built_in">map</span>.get(key));</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="2-Concurrenthashmap"><a href="#2-Concurrenthashmap" class="headerlink" title="2.Concurrenthashmap"></a>2.Concurrenthashmap</h2><h3 id="jdk1-7"><a href="#jdk1-7" class="headerlink" title="jdk1.7"></a>jdk1.7</h3><p><img src="%E9%9D%A2%E8%AF%95%E9%A2%98/concurrent1" alt="concurrent构成"></p>
+<p>如图所示，是由 Segment 数组、HashEntry 组成，和 HashMap 一样，仍然是数组加链表。</p>
+<p>它的核心成员变量：</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">   <span class="operator">/**</span></span><br><span class="line">    <span class="operator">*</span> <span class="variable">Segment</span> 数组，存放数据时首先需要定位到具体的 <span class="variable">Segment</span> 中。</span><br><span class="line">    <span class="operator">*/</span></span><br><span class="line">   <span class="variable">final</span> <span class="variable">Segment</span><span class="operator">&lt;</span><span class="built_in">K</span><span class="operator">,</span><span class="variable">V</span><span class="operator">&gt;</span><span class="punctuation">[</span><span class="punctuation">]</span> <span class="variable">segments</span><span class="operator">;</span></span><br><span class="line">   <span class="variable">transient</span> <span class="built_in">Set</span><span class="operator">&lt;</span><span class="built_in">K</span><span class="operator">&gt;</span> <span class="variable">keySet</span><span class="operator">;</span></span><br><span class="line">   <span class="variable">transient</span> <span class="built_in">Set</span><span class="operator">&lt;</span><span class="built_in">Map</span><span class="operator">.</span><span class="variable">Entry</span><span class="operator">&lt;</span><span class="built_in">K</span><span class="operator">,</span><span class="variable">V</span><span class="operator">&gt;&gt;</span> <span class="variable">entrySet</span><span class="operator">;</span></span><br></pre></td></tr></table></figure>
+
+<p>和 HashMap 非常类似，唯一的区别就是其中的核心数据如 value ，以及链表都是 volatile 修饰的，保证了获取时的可见性。</p>
+<p>原理上来说：ConcurrentHashMap 采用了分段锁技术，其中 Segment 继承于 ReentrantLock。不会像 HashTable 那样不管是 put 还是 get 操作都需要做同步处理，理论上 ConcurrentHashMap 支持 CurrencyLevel (Segment 数组数量)的线程并发。每当一个线程占用锁访问一个 Segment 时，不会影响到其他的 Segment。</p>
+<p><strong>[put]</strong></p>
+<ul>
+<li><p>将当前 Segment 中的 table 通过 key 的 hashcode 定位到 HashEntry。</p>
+</li>
+<li><p>遍历该 HashEntry，如果不为空则判断传入的 key 和当前遍历的 key 是否相等，相等则覆盖旧的 value。</p>
+</li>
+<li><p>不为空则需要新建一个 HashEntry 并加入到 Segment 中，同时会先判断是否需要扩容。</p>
+</li>
+<li><p>最后会解除在 1 中所获取当前 Segment 的锁</p>
+</li>
+</ul>
+<p><strong>[get]</strong></p>
+<ul>
+<li><p>只需要将 Key 通过 Hash 之后定位到具体的 Segment ，再通过一次 Hash 定位到具体的元素上。</p>
+</li>
+<li><p>由于 HashEntry 中的 value 属性是用 volatile 关键词修饰的，保证了内存可见性，所以每次获取时都是最新值。</p>
+</li>
+<li><p>ConcurrentHashMap 的 get 方法是非常高效的，因为整个过程都不需要加锁。</p>
+</li>
+</ul>
+<h3 id="jdk1-8"><a href="#jdk1-8" class="headerlink" title="jdk1.8"></a>jdk1.8</h3><p>抛弃了原有的 Segment 分段锁，而采用了 <code>CAS + synchronized</code> 来保证并发安全性。</p>
+<p>也将 1.7 中存放数据的 HashEntry 改为 Node，但作用都是相同的。</p>
+<p>其中的 val next 都用了 volatile 修饰，保证了可见性。</p>
+<p><strong>[put]</strong></p>
+<ul>
+<li><p>根据 key 计算出 hashcode 。</p>
+</li>
+<li><p>判断是否需要进行初始化。</p>
+</li>
+<li><p>f 即为当前 key 定位出的 Node，如果为空表示当前位置可以写入数据，利用 CAS 尝试写入，失败则自旋保证成功。</p>
+</li>
+<li><p>如果当前位置的 <code>hashcode == MOVED == -1</code>,则需要进行扩容。</p>
+</li>
+<li><p>如果都不满足，则利用 synchronized 锁写入数据。</p>
+</li>
+<li><p>如果数量大于 TREEIFY_THRESHOLD 则要转换为红黑树。</p>
+</li>
+</ul>
+<p><strong>[get]</strong></p>
+<ul>
+<li><p>根据计算出来的 hashcode 寻址，如果就在桶上那么直接返回值。</p>
+</li>
+<li><p>如果是红黑树那就按照树的方式获取值。</p>
+</li>
+<li><p>不满足那就按照链表的方式遍历获取值。</p>
+</li>
+</ul>
+<blockquote>
+<p>1.8 在 1.7 的数据结构上做了大的改动，采用红黑树之后可以保证查询效率（O(logn)），甚至取消了 ReentrantLock 改为了 synchronized，这样可以看出在新版的 JDK 中对 synchronized 优化是很到位的。</p>
+</blockquote>
+<h2 id="3-内存相关"><a href="#3-内存相关" class="headerlink" title="3.内存相关"></a>3.内存相关</h2><h3 id="3-1-对象在内存中的布局：（4部分）"><a href="#3-1-对象在内存中的布局：（4部分）" class="headerlink" title="3.1 对象在内存中的布局：（4部分）"></a>3.1 对象在内存中的布局：（4部分）</h3><ul>
+<li><code>markword</code> :标记字，8字节（64位的话，给8字节），记录的是锁信息、hashcode、gc垃圾回收信息</li>
+<li><code>class pointer</code>:类型指针。（创建一个Object类型，就是Object.class）</li>
+<li><code>instance data</code>:实例数据，一个类中的成员变量（8种基本数据类型和引用数据类型）</li>
+<li><code>padding</code>:对齐，为了能够让上述三部分相加起来的字节数能够让8整除，多添加几个字节，目的是为了提高cpu的利用率。</li>
+</ul>
+<p>一个Object对象，占16个字节，8个标记字，4个class pointer,还有4个对齐</p>
+<h3 id="3-2-锁升级"><a href="#3-2-锁升级" class="headerlink" title="3.2 锁升级"></a>3.2 锁升级</h3><p>java上的实现都是小端在前，大端在后；网络上的实现都是大端在前</p>
+<ul>
+<li>new出来对象之后，优先上的锁叫偏向锁，偏向第一个进去做事的线程。偏向锁的意思就是当前线程的指针被记录在了markword里面，偏向锁严格来讲不是一把锁，它就是一个标志，表示这个锁归我了。</li>
+<li>偏向锁不需要锁竞争，只需要第一个来的线程就直接给他上了这个锁，没有竞争，就少了同步，效率就会提升。</li>
+</ul>
+<p><strong>为什么要设计偏向锁？</strong></p>
+<p>设计偏向锁的原因在于提高效率，因为这个锁相当于给了一个标记，标记它不需要去参与竞争。</p>
+<p><strong>如果第二个线程来了怎么办？</strong></p>
+<p>1&gt;这个时候锁升级，升级为自旋锁（轻量级锁）。<br>2&gt;自旋锁又会升级为重量级锁</p>
+<p><strong>那么什么时候自旋锁会升级为重量级锁？</strong></p>
+<p>竞争加剧：有一个线程超过10次自旋，或者自旋线程超过CPU核数的一半，就会升级。1.6之后，加入自适应自旋AdapativeSlefSpinning，JVM自己控制</p>
+<h4 id="3-2-1-自旋锁和重量级锁的区别"><a href="#3-2-1-自旋锁和重量级锁的区别" class="headerlink" title="3.2.1 自旋锁和重量级锁的区别"></a>3.2.1 自旋锁和重量级锁的区别</h4><p>自旋是发生在用户空间的，它不经过os对线程的调度。一般来讲，只要调用了<code>wait()</code>、<code>notify()</code>等方法，就进入到了重量级锁的状态了。重量级状态是什么状态呢？这把锁，附着着一个队列，这个队列的专业叫法叫<code>waitSet</code>,<code>waitSet</code>这里面的线程都是排好队的，等着操作系统调度才能拿到锁，这个<code>waitSet</code>就是等待队列。区别就在于，自旋锁是大家相互抢，谁抢着锁算谁的，而重量级锁是大家都进入到一个等待队列中去，等着操作系统老大去进行调度拿锁。自旋锁在等待的时候消耗cpu资源，而重量级锁在等待的时候不需要消耗cpu资源。</p>
+<h4 id="3-2-2-偏向锁的时延："><a href="#3-2-2-偏向锁的时延：" class="headerlink" title="3.2.2 偏向锁的时延："></a>3.2.2 偏向锁的时延：</h4><p>偏向锁是在jvm启动之后的4秒后开始启动，偏向锁启动之后，给对象上的偏向锁都是匿名偏向。<code>为什么是4秒？</code>原因是jvm启动的过程一定会有锁竞争，因此就没有必要启动这把偏向锁，等jvm启动之后，再启动偏向锁</p>
+<h4 id="3-2-3-偏向锁的效率是不是一定比自旋锁的效率高？打开偏向锁是不是效率一定会提升？"><a href="#3-2-3-偏向锁的效率是不是一定比自旋锁的效率高？打开偏向锁是不是效率一定会提升？" class="headerlink" title="3.2.3 偏向锁的效率是不是一定比自旋锁的效率高？打开偏向锁是不是效率一定会提升？"></a>3.2.3 偏向锁的效率是不是一定比自旋锁的效率高？打开偏向锁是不是效率一定会提升？</h4><p>不一定，因为偏向锁是希望没有锁竞争的，但是如果你明明知道会有锁竞争，还去加偏向锁，没有任何意义。</p>
+<blockquote>
+<p>注意：偏向锁是锁的类型，可重入锁是锁的机制，两个不是一个概念。</p>
+</blockquote>
+<h3 id="3-3-volatile关键字"><a href="#3-3-volatile关键字" class="headerlink" title="3.3 volatile关键字"></a>3.3 volatile关键字</h3><p>作用：</p>
+<ul>
+<li>1、线程间可见<br>  A线程将变量的值更改了，另一个线程需要知道</li>
+<li>2、禁止指令重排序<br>  指令重排序：在程序运行中，可能后面的代码比前面的代码先执行（前提是后面的代码不依赖于前面的代码情况下，为了提高cpu利用率，会这样运行）<br>  禁止重排序原理：在两条指令中间加了一层屏障：JSR内存屏障（分四种：LoadLoad屏障、StoreStore屏障、LoadStore屏障、StoreLoad屏障）<br>  load是读，store是写</li>
+</ul>
+<h4 id="3-3-1-汇编语言的lock指令"><a href="#3-3-1-汇编语言的lock指令" class="headerlink" title="3.3.1 汇编语言的lock指令:"></a>3.3.1 汇编语言的lock指令:</h4><ul>
+<li>用于在多处理器中执行指令时对共享内存的独占使用</li>
+<li>它的作用是能够将当前处理器对应缓存的内容刷新到内存，并使其他处理器对应的缓存失效。</li>
+<li>另外还提供了有序的指令无法越过这个内存屏障的作用。</li>
+<li>lock addl实现了volatile的两个作用</li>
+</ul>
+<h3 id="3-4-Java和go"><a href="#3-4-Java和go" class="headerlink" title="3.4 Java和go"></a>3.4 Java和go</h3><ul>
+<li>Java的线程和内核线程是一对一的。</li>
+<li>Go的线程和内核是M:N的，而且M远大于N</li>
+<li>Java中的线程池：<code>forkjoinPool</code>,每一个线程都有自己的任务队列，但是任务和任务之间它们是不能做同步的，就是说我这个任务执行完了才能执行下一个任务。但是go的routin任务和任务之间是可以同步的，在用户空间模拟了cpu的执行，有类似保存现场恢复现场的功能。</li>
+</ul>
+<h1 id="二-设计模式"><a href="#二-设计模式" class="headerlink" title="二.设计模式"></a>二.设计模式</h1><h2 id="1-单例模式"><a href="#1-单例模式" class="headerlink" title="1.单例模式"></a>1.单例模式</h2><h3 id="1-1-饿汉"><a href="#1-1-饿汉" class="headerlink" title="1.1 饿汉"></a>1.1 饿汉</h3><ul>
+<li>对外提供一个返回该实例的方法，static用来在jvm启动过程中去创建对象，构造方法私有化，以此来保证在程序运行过程中用到的对象都是只有一个实例。</li>
+<li>类加载到内存后，就会实例化一个单例，JVM保证线程安全。</li>
+<li>简单实用，推荐使用。</li>
+<li>唯一缺点：类装载的时候就完成实例化，不管你是否需要用到它。</li>
+</ul>
+<h3 id="1-2懒汉："><a href="#1-2懒汉：" class="headerlink" title="1.2懒汉："></a>1.2懒汉：</h3><ul>
+<li>什么时候需要用，才会将这个实例给new出来，但是是线程不安全的，因为同一时刻如果多个线程都需要这个实例，产生出来的就不止一个对象，很简单的优化方式就是加synchronized锁，以此来保证只有一个实例。 但是这种锁的粒度太大了，如果在getInstance方法中有业务代码，那么会锁定相关的业务代码。所以就牵涉到一个优化问题</li>
+<li>引入DCL：double check lock</li>
+</ul>
+<p>相关代码如下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Mgr01</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Mgr01 INSTANCE;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Mgr01</span>()</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Mgr01 <span class="title">getInstance</span>()</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(INSTANCE == <span class="literal">null</span>)&#123;</span><br><span class="line">            synchronized (Mgr01.<span class="keyword">class</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span> (INSTANCE == <span class="literal">null</span> )&#123;</span><br><span class="line">                    INSTANCE = <span class="keyword">new</span> Mgr01();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>DCl不能乱序，所以DCL一定要加volatile。因为在初始化一个对象的时候，在汇编层面有5条指令，大体的流程就是：开辟内存空间-&gt;成员变量初始化-&gt;引用绑定，之所以要用volatile就是为了不让其指令发生重排序，如果不加的话，可能第二步和第三步发生指令重排序，导致成员没有初始化就将引用绑定给变量了，那么其他线程用这个类的实例的时候就会出现问题。</p>
+<h1 id="三、存储层"><a href="#三、存储层" class="headerlink" title="三、存储层"></a>三、存储层</h1><h2 id="1-Mysql"><a href="#1-Mysql" class="headerlink" title="1.Mysql"></a>1.Mysql</h2><h4 id="1-1-隔离级别"><a href="#1-1-隔离级别" class="headerlink" title="1.1 隔离级别"></a>1.1 隔离级别</h4><ul>
+<li>读未提交<br>  脏读</li>
+<li>读已提交<br>  不可重复读</li>
+<li>可重复度*（mysql默认的隔离级别）<br>  幻读</li>
+<li>可序列化</li>
+</ul>
+<h4 id="1-2-事务隔离级别实现原理"><a href="#1-2-事务隔离级别实现原理" class="headerlink" title="1.2 事务隔离级别实现原理"></a>1.2 事务隔离级别实现原理</h4><h5 id="1-2-1-事务隔离的实现-mvcc，多版本并发控制"><a href="#1-2-1-事务隔离的实现-mvcc，多版本并发控制" class="headerlink" title="1.2.1 事务隔离的实现-mvcc，多版本并发控制"></a>1.2.1 事务隔离的实现-mvcc，多版本并发控制</h5><p>在mysql中，不管一个表的数据结构定义成什么样，都会有两个隐藏列：</p>
+<ul>
+<li>trx_id:每次对某条聚簇索引记录进行改动时，都会把对应的事务id赋值给trx_id隐藏列。</li>
+<li>roll_pointer:每次对某条聚簇索引记录进行改动时，都会把旧的版本写入到undo日志中，然后这个隐藏列就相当于一个指针，可以通过它来找到该记录修改前的信息。</li>
+</ul>
+<p><img src="%E9%9D%A2%E8%AF%95%E9%A2%98/1.png" alt="mvcc"></p>
+<p><strong>mvcc的流程</strong></p>
+<ul>
+<li>1.事务在查询数据之前，会生成数据库系统当前的一个快照（read view），记录并维护系统当前<code>活跃事务的ID</code>,快照里面存着的是当前时间<code>活跃的事务id</code></li>
+<li>2.把快照比作条件用来判断当前事务能够看到哪个版本的数据</li>
+<li>3.快照是在<code>查询数据</code>时生成的。</li>
+</ul>
+<p><img src="%E9%9D%A2%E8%AF%95%E9%A2%98/2.png" alt="mvcc"></p>
+<p>总结：拿着数据比对版本，而不是拿着版本找数据。</p>
+<ul>
+<li>不同的隔离级别底层就是因为他们的快照不一样。</li>
+<li>读未提交就是根本没有快照，每次修改了不用提交就是一个新的版本。每次读都是一次全新的搜索</li>
+<li>可重复读是在第一次查询数据的时候生成一次快照，只要我还没提交，我就不会改变我的快照，所以叫可重复读。</li>
+<li>序列化就是我不存在快照，就是串行执行，没有并发的概念。</li>
+</ul>
+<h4 id="1-2-幻读是什么？"><a href="#1-2-幻读是什么？" class="headerlink" title="1.2 幻读是什么？"></a>1.2 幻读是什么？</h4><ul>
+<li>幻读主要体现在读-写冲突上，而不可重复读主要体现在读-读冲突上</li>
+<li>比如A事务开启之后，读了4条数据，而B事务同时插入了命中A查询条件中的一条数据。A查询之后进行了update，update语句是不会去管快照的，他会直接从B-tree上去读数据，但是这个时候B-tree上有5条数据，它的快照上还是4条，更新之后再次查询，查出了5条，这种现象就是幻读。</li>
+<li>为什么是5条？因为在update的时候在trx_id这个隐藏列中有了A事务的事务id，所以在更新之后查询能查得到。</li>
+</ul>
+<h4 id="1-3-锁"><a href="#1-3-锁" class="headerlink" title="1.3 锁"></a>1.3 锁</h4><ul>
+<li>行锁，表锁—-&gt;锁的粒度</li>
+<li>乐观锁，悲观锁—-&gt;锁的时机</li>
+<li>共享锁，排他锁—-&gt;锁的兼容性</li>
+</ul>
+<p>mysql的官方文档中有<code>8</code>种锁模式</p>
+<ul>
+<li>索引锁<br>  记录存在与否和事务加锁成功与否无关，如SELECT * FROM user WHERE id = 5 FOR UPDATE，此时id=5的记录不存在，隔壁事务仍然无法插入记录（假设当前自增的主键id已经是4了）。因为锁定的是索引，故记录实体存在与否没关系。</li>
+<li>间隙锁</li>
+<li>临键锁<br>  间隙锁一定是开区间，临键锁是是一个左开右闭的区间<br>  间隙锁是不互斥的，即两个事务可以同时持有包含共同间隙的间隙锁。<br>  在RR级别下，如果你使用select … in share mode或者select … for update语句，那么InnoDB会使用临键锁，因而可以防止幻读</li>
+<li>共享锁/排他锁</li>
+<li>意向共享锁/意向排他锁<br>  共享锁/排他锁都只是行锁，意向共享锁/意向排他锁属于表锁<br>  取得意向共享锁/意向排他锁是取得共享锁/排他锁的前置条件<br>  一个事务在请求共享锁/排他锁时，获取到的结果却可能是行锁，也可能是间隙锁，也可能是临键锁</li>
+<li>插入意向锁<br>  插入意向锁是一种特殊的间隙锁<br>  两个事务却不能在同一时间内一个拥有间隙锁，另一个拥有该间隙区间内的插入意向锁（当然，插入意向锁如果不在间隙锁区间内则是可以的）</li>
+<li>自增锁</li>
+<li>预测锁<br>  自增锁是一种特殊的表级锁，主要用于事务中插入自增字段，也就是我们最常用的自增主键id。<br>  自增锁有3种模式，决定了并发自增时并发的自增语句如何持有锁</li>
+</ul>
+<h1 id="四-Java底层"><a href="#四-Java底层" class="headerlink" title="四.Java底层"></a>四.Java底层</h1><h2 id="1-锁"><a href="#1-锁" class="headerlink" title="1.锁"></a>1.锁</h2><ul>
+<li>引入锁，目的是为了保证数据一致性。</li>
+<li>锁住的一定是一个对象，而且同一时刻只能有一个线程拥有锁去做业务逻辑处理</li>
+</ul>
+<h2 id="2-不持有锁的线程怎么办？"><a href="#2-不持有锁的线程怎么办？" class="headerlink" title="2.不持有锁的线程怎么办？"></a>2.不持有锁的线程怎么办？</h2><ul>
+<li>自旋：轻量级锁。</li>
+<li>进入等待队列，等待操作系统调度，这个时候是重量级锁。</li>
+</ul>
+<h2 id="3-synchronized关键字"><a href="#3-synchronized关键字" class="headerlink" title="3.synchronized关键字"></a>3.synchronized关键字</h2><ul>
+<li>1.在早期1.0~1.2的时候，操作系统会接管对应的线程，是个重量级锁，效率非常低。</li>
+<li>2.jdk1.5之后，诞生了<code>JUC</code>包</li>
+<li>3.锁升级：偏向锁（没有竞争）—&gt;轻量级锁（重量级锁）—&gt;重量级锁</li>
+</ul>
+<h3 id="3-1-AtomicInteger"><a href="#3-1-AtomicInteger" class="headerlink" title="3.1 AtomicInteger"></a>3.1 AtomicInteger</h3><ul>
+<li><code>incrementAndGet()</code>用到的就是自旋锁。在这个方法的底层调用的是<code>compareAndSwapInt</code>，比较并交换，简写为<code>CAS</code>.</li>
+</ul>
+<p><strong>什么叫CAS？</strong></p>
+<p>CAS不需要操作系统的调度，只需要在用户空间即可解决。<br><img src="%E9%9D%A2%E8%AF%95%E9%A2%98/5.png" alt="cas"></p>
+<h3 id="3-2-CAS两大面试题"><a href="#3-2-CAS两大面试题" class="headerlink" title="3.2 CAS两大面试题"></a>3.2 CAS两大面试题</h3><h4 id="3-2-1-ABA问题加版本号即可解决"><a href="#3-2-1-ABA问题加版本号即可解决" class="headerlink" title="3.2.1 ABA问题加版本号即可解决"></a>3.2.1 ABA问题加版本号即可解决</h4><h4 id="3-2-2-CAS修改值的时候的原子性问题"><a href="#3-2-2-CAS修改值的时候的原子性问题" class="headerlink" title="3.2.2 CAS修改值的时候的原子性问题"></a>3.2.2 CAS修改值的时候的原子性问题</h4><ul>
+<li>Q:当线程A在判断原值E是否是原值之后，还没有修改之前，如何保证没有其他线程B对其变量进行修改？</li>
+<li>A:CAS在最底层是用<code>lock cmpxchg</code>指令来支撑的。在多核cpu下，lock指令是锁总线的作用。最终的CAS实现就是这条指令。</li>
+</ul>
+<h2 id="4-生成一个对象的过程？"><a href="#4-生成一个对象的过程？" class="headerlink" title="4.生成一个对象的过程？"></a>4.生成一个对象的过程？</h2><p>至少需要三步：</p>
+<ul>
+<li>1.申请内存空间，用来装new出来的对象。</li>
+<li>2.调用构造方法，从默认值变成初始值，此时是半初始化状态</li>
+<li>3.建立引用连接</li>
+</ul>
+<h2 id="5-happens-before原则（JVM规定重排序必须遵守的原则）"><a href="#5-happens-before原则（JVM规定重排序必须遵守的原则）" class="headerlink" title="5.happens-before原则（JVM规定重排序必须遵守的原则）"></a>5.happens-before原则（JVM规定重排序必须遵守的原则）</h2><ul>
+<li><code>as if serial</code>:不管如何重排序，单线程执行结果不会改变</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://utinner.gitee.io/2020/10/23/%E9%9D%A2%E8%AF%95%E9%A2%98/" title="面试准备" target="_blank" rel="external">https://utinner.gitee.io/2020/10/23/面试题/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/utinner" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/utinner" target="_blank"><span class="text-dark">靳平</span><small class="ml-1x">北漂程序员</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/10/23/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9B%B8%E5%85%B3%E9%9D%A2%E8%AF%95%E9%A2%98/" title="多线程相关面试题"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/08/17/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/" title="分布式一致性问题"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="qq,wechat" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<!-- custom analytics part create by xiamo -->
+<script defer src="https://cdn1.lncld.net/static/js/av-min-1.2.1.js"></script>
+<script defer>
+AV.init({
+  appId: 'BNPHGqdExiXaEZFh4AgOPmmu-gzGzoHsz',
+  appKey: 's3p79Nt6MZRbWf5rPoOj9DES'
+});
+
+function showTime(Counter) {
+	var query = new AV.Query(Counter);
+		var visitors= $('.leancloud_visitors');
+		query.greaterThanOrEqualTo("time", 0);		
+		query.find({
+			success: function(results) {
+				if (results.length == 0) {				
+					return;
+				}
+				var data = results;
+				visitors.each(function(){
+					var url = $(this).attr('id').trim();					
+					for (var i = 0; i < data.length; i++) {
+						var object = data[i];
+						var content = object.get('time');
+						var _url = object.get('url')
+						if(url == _url){
+							$(this).text(content);
+						}
+					}
+				})
+				
+			},
+			error: function(object, error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+}
+
+function addCount(Counter) {
+	var Counter = AV.Object.extend("Counter");
+	url = $(".leancloud_visitors").attr('id').trim();
+	title = $(".leancloud_visitors").attr('data-flag-title').trim();
+	var query = new AV.Query(Counter);
+	query.equalTo("url", url);
+	query.find({
+		success: function(results) {
+			if (results.length > 0) {
+				var counter = results[0];
+				counter.fetchWhenSave(true);
+				counter.increment("time");
+				counter.save(null, {
+					success: function(counter) {
+						var content = counter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(counter, error) {
+						console.log('Failed to save Visitor num, with error message: ' + error.message);
+					}
+				});
+			} else {
+				var newcounter = new Counter();
+				newcounter.set("title", title);
+				newcounter.set("url", url);
+				newcounter.set("time", 1);
+				newcounter.save(null, {
+					success: function(newcounter) {
+					    console.log("newcounter.get('time')="+newcounter.get('time'));
+						var content = newcounter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(newcounter, error) {
+						console.log('Failed to create');
+					}
+				});
+			}
+		},
+		error: function(error) {
+			console.log('Error:' + error.code + " " + error.message);
+		}
+	});
+}
+$(function() {
+	var Counter = AV.Object.extend("Counter");
+	if ($('.leancloud_visitors').length == 1) {
+		addCount(Counter);
+	} else {
+		showTime(Counter);
+	}
+}); 
+</script>
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>
