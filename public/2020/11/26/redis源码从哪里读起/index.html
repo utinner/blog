@@ -25,16 +25,16 @@
 <meta property="og:site_name" content="代码乐园">
 <meta property="og:description" content="Redis是用C语言实现的，首先，你当然应该从main函数开始读起。但我们在读的时候应该抓住一条主线，也就是当我们向Redis输入一条命令的时候，代码是如何一步步执行的。这样我们就可以先从外部观察，尝试执行一些命令，在了解了这些命令执行的外部表现之后，再钻进去看对应的源码是如何实现的。要想读懂这些代码，首先我们需要理解Redis的事件机制。而且，一旦理解了Redis的事件循环(Event Lo">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/main_start_event_loop.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/accept_handler_flow_chart.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/process_query_flow_chart.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/method_call_hierarchy.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/main_start_event_loop.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/accept_handler_flow_chart.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/process_query_flow_chart.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/method_call_hierarchy.png">
 <meta property="article:published_time" content="2020-11-26T09:58:38.000Z">
 <meta property="article:modified_time" content="2021-12-06T09:23:00.883Z">
 <meta property="article:author" content="JinPing">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/main_start_event_loop.png">
+<meta name="twitter:image" content="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/main_start_event_loop.png">
   <!-- Canonical links -->
   <link rel="canonical" href="https://utinner.gitee.io/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/index.html">
   
@@ -154,26 +154,6 @@
         </li>
         
         
-        <li class="menu-item menu-item-books">
-          <a href="/books">
-            
-            <i class="icon icon-book-fill"></i>
-            
-            <span class="menu-title">书单</span>
-          </a>
-        </li>
-        
-        
-        <li class="menu-item menu-item-links">
-          <a href="/links">
-            
-            <i class="icon icon-friendship"></i>
-            
-            <span class="menu-title">友链</span>
-          </a>
-        </li>
-        
-        
         <li class="menu-item menu-item-about">
           <a href="/about">
             
@@ -245,7 +225,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -268,21 +248,6 @@
               </p>
               <p class="item-date">
                 <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
-              </p>
-            </div>
-          </li>
-          
-          <li>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                
-              </p>
-              <p class="item-title">
-                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
               </p>
             </div>
           </li>
@@ -328,6 +293,21 @@
               </p>
               <p class="item-date">
                 <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/22/%E5%A4%A7%E4%BD%9C%E6%96%87/" class="title">大作文</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-22T02:46:31.000Z" itemprop="datePublished">2021-10-22</time>
               </p>
             </div>
           </li>
@@ -392,11 +372,18 @@
     </span>
 
         
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 8.4k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 29(分)</span>
+	
+
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <meta name="referrer" content="no-referrer" />
+        <meta name="referrer" content="no-referrer">
 
 <p>Redis是用C语言实现的，首先，你当然应该从main函数开始读起。但我们在读的时候应该抓住一条主线，也就是当我们向Redis输入一条命令的时候，代码是如何一步步执行的。这样我们就可以先从外部观察，尝试执行一些命令，在了解了这些命令执行的外部表现之后，再钻进去看对应的源码是如何实现的。要想读懂这些代码，首先我们需要理解Redis的事件机制。而且，一旦理解了Redis的事件循环(Event Loop)的机制，我们还会搞明白一个有趣的问题：为什么Redis是单线程执行却能同时处理多个请求？（当然严格来说Redis运行起来并非只有一个线程，但除了主线程之外，Redis的其它线程只是起辅助作用，它们是一些在后台运行做异步耗时任务的线程）</p>
 <p>从main函数开始，沿着代码执行路径，实际上我们可以一直追下去。</p>
@@ -415,7 +402,9 @@
 <li>各种初始化（包括事件循环的初始化）；</li>
 <li>执行事件循环。</li>
 </ul>
-<p>这两个执行阶段可以用下面的流程图来表达：<br><img src="redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/main_start_event_loop.png" alt="main_start_event_loop"></p>
+<p>这两个执行阶段可以用下面的流程图来表达：</p>
+<img src="/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/main_start_event_loop.png" class title="main_start_event_loop">
+
 <p>首先，我们看一下初始化阶段中的各个步骤：</p>
 <ul>
 <li><strong>配置加载和初始化</strong>。这一步表示Redis服务器基本数据结构和各种参数的初始化。在Redis源码中，Redis服务器是用一个叫做<code>redisServer</code>的struct来表达的，里面定义了Redis服务器赖以运行的各种参数，比如监听的端口号和文件描述符、当前连接的各个client端、Redis命令表(command table)配置、持久化相关的各种参数，等等，以及后面马上会讨论的事件循环结构。Redis服务器在运行时就是由一个<code>redisServer</code>类型的全局变量来表示的（变量名就叫<code>server</code>），这一步的初始化主要就是对于这个全局变量进行初始化。在整个初始化过程中，有一个需要特别关注的函数：<code>populateCommandTable</code>。它初始化了Redis命令表，通过它可以由任意一个Redis命令的名字查找该命令的配置信息（比如该命令接收的命令参数个数、执行函数入口等）。在本文的第二部分，我们将会一起来看一看如何从接收一个Redis命令的请求开始，一步步执行到来查阅这个命令表，从而找到该命令的执行入口。另外，这一步中还有一个值得一提的地方：在对全局的<code>redisServer</code>结构进行了初始化之后，还需要从配置文件（redis.conf）中加载配置。这个过程可能覆盖掉之前初始化过的<code>redisServer</code>结构中的某些参数。换句话说，就是先经过一轮初始化，保证Redis的各个内部数据结构以及参数都有缺省值，然后再从配置文件中加载自定义的配置。</li>
@@ -454,9 +443,11 @@
 </ul>
 <p>上述第一个过程，「连接建立」，对应到服务端的代码，就是会走到<code>acceptTcpHandler</code>或<code>acceptUnixHandler</code>这两个回调函数中去。换句话说，Redis服务器每收到一个新的连接请求，就会由事件循环触发一个I/O事件，从而执行到acceptTcpHandler或acceptUnixHandler回调函数的代码。</p>
 <p>接下来，从socket编程的角度，服务器应该调用<code>accept</code>系统API[7]来接受连接请求，并为新的连接创建出一个socket。这个新的socket也就对应着一个新的文件描述符。为了在新的连接上能接收到客户端发来的命令，接下来必须在事件循环中为这个新的文件描述符注册一个I/O事件回调。这个过程的流程图如下：</p>
-<p><img src="redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/accept_handler_flow_chart.png" alt="accept_handler_flow_chart"></p>
+<img src="/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/accept_handler_flow_chart.png" class title="accept_handler_flow_chart">
+
 <p>从上面流程图可以看出，新的连接注册了一个I/O事件回调，即<code>readQueryFromClient</code>。也就是说，对应前面讲的第二个过程，「命令发送、执行和响应」，当服务器收到命令数据的时候，也会由事件循环触发一个I/O事件，执行到<code>readQueryFromClient</code>回调。这个函数的实现就是在处理命令的「执行和响应」了。因此，下面我们看一下这个函数的执行流程图：</p>
-<p><img src="redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/process_query_flow_chart.png" alt="process_query_flow_chart"></p>
+<img src="/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/process_query_flow_chart.png" class title="process_query_flow_chart">
+
 <p>上述流程图有几个需要注意的点：</p>
 <ul>
 <li>从socket中读入数据，是按照流的方式。也就是说，站在应用层的角度，从底层网络层读入的数据，是由一个个字节组成的字节流。而我们需要从这些字节流中解析出完整的Redis命令，才能知道接下来如何处理。但由于网络传输的特点，我们并不能控制一次读入多少个字节。实际上，即使服务器只是收到一个Redis命令的部分数据（哪怕只有一个字节），也有可能触发一次I/O事件回调。这时我们是调用read系统API[8]来读入数据的。虽然调用<code>read</code>时我们可以指定期望读取的字节数，但它并不会保证一定能返回期望长度的数据。比如我们想读100个字节，但可能只能读到80个字节，剩下的20个字节可能还在网络传输中没有到达。这种情况给接收Redis命令的过程造成了很大的麻烦：首先，可能我们读到的数据还不够一个完整的命令，这时我们应该继续等待更多的数据到达。其次，我们可能一次性收到了大量的数据，里面包含不止一个命令，这时我们必须把里面包含的所有命令都解析出来，而且要正确解析到最后一个完整命令的边界。如果最后一个完整命令后面还有多余的数据，那么这些数据应该留在下次有更多数据到达时再处理。这个复杂的过程一般称为「粘包」。</li>
@@ -500,7 +491,8 @@
 <li>这个树型图并没有把所有函数调用关系都表达出来，只是列出了跟本文相关的调用流程。</li>
 </ul>
 <p>关键路径代码调用关系图</p>
-<p><img src="redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/method_call_hierarchy.png" alt="method_call_hierarchy"></p>
+<img src="/2020/11/26/redis%E6%BA%90%E7%A0%81%E4%BB%8E%E5%93%AA%E9%87%8C%E8%AF%BB%E8%B5%B7/method_call_hierarchy.png" class title="method_call_hierarchy">
+
 <p>上图中添加了部分注释，应该可以很清楚地和本文前面介绍过的一些流程对应上。另外，图中一些可能需要注意的细节，如下列出：</p>
 <ul>
 <li>初始化过程增加了aeSetBeforeSleepProc和aeSetAfterSleepProc，注册了两个回调函数，这在本文前面没有提到过。一个用于在事件循环每轮开始时调用，另一个会在每轮事件循环的阻塞等待后（即aeApiPoll返回后）调用。图中下面第5个调用流程的入口beforeSleep，就是由这里的aeSetBeforeSleepProc来注册到事件循环中的。</li>

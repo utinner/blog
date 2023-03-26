@@ -25,50 +25,50 @@
 <meta property="og:site_name" content="代码乐园">
 <meta property="og:description" content="在一台linux机器上，不管创建多少个docker容器，他们都有属于自己的ip地址，并且可以相互ping通访问。 为什么会ping通？其中的原理是什么？">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/1.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/2.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/3.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/4.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/5.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/6.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/7.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/8.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/11.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/12.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/13.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/14.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/15.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/16.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/17.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/18.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/19.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/21.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/22.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/23.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/24.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/25.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/26.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/27.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/28.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/29.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/31.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/32.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/33.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/34.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/35.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/36.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/37.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/38.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/39.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/41.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/42.png">
-<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/43.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/1.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/2.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/3.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/4.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/5.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/6.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/7.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/8.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/11.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/12.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/13.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/14.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/15.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/16.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/17.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/18.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/19.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/21.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/22.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/23.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/24.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/25.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/26.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/27.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/28.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/29.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/31.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/32.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/33.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/34.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/35.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/36.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/37.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/38.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/39.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/41.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/42.png">
+<meta property="og:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/43.png">
 <meta property="article:published_time" content="2021-01-16T17:43:20.000Z">
 <meta property="article:modified_time" content="2021-12-06T09:23:00.690Z">
 <meta property="article:author" content="JinPing">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/1.png">
+<meta name="twitter:image" content="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="https://utinner.gitee.io/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/index.html">
   
@@ -188,26 +188,6 @@
         </li>
         
         
-        <li class="menu-item menu-item-books">
-          <a href="/books">
-            
-            <i class="icon icon-book-fill"></i>
-            
-            <span class="menu-title">书单</span>
-          </a>
-        </li>
-        
-        
-        <li class="menu-item menu-item-links">
-          <a href="/links">
-            
-            <i class="icon icon-friendship"></i>
-            
-            <span class="menu-title">友链</span>
-          </a>
-        </li>
-        
-        
         <li class="menu-item menu-item-about">
           <a href="/about">
             
@@ -279,7 +259,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -302,21 +282,6 @@
               </p>
               <p class="item-date">
                 <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
-              </p>
-            </div>
-          </li>
-          
-          <li>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                
-              </p>
-              <p class="item-title">
-                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
               </p>
             </div>
           </li>
@@ -362,6 +327,21 @@
               </p>
               <p class="item-date">
                 <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/22/%E5%A4%A7%E4%BD%9C%E6%96%87/" class="title">大作文</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-22T02:46:31.000Z" itemprop="datePublished">2021-10-22</time>
               </p>
             </div>
           </li>
@@ -426,11 +406,18 @@
     </span>
 
         
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.8k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <meta name="referrer" content="no-referrer" />
+        <meta name="referrer" content="no-referrer">
 
 <p>在一台linux机器上，不管创建多少个docker容器，他们都有属于自己的ip地址，并且可以相互ping通访问。</p>
 <p>为什么会ping通？其中的原理是什么？</p>
@@ -440,111 +427,111 @@
 <li>创建一个基于busybox的容器<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d --name test1 busybox <span class="regexp">/bin/</span>sh -c <span class="string">&quot;while true; do sleep 3600; done&quot;</span></span><br></pre></td></tr></table></figure></li>
 <li>输入<code>ip -a </code>命令即可查看当前容器下的网络ip地址和命名空间</li>
 </ul>
-<h2 id="通过实现linux的network-namespace实现两个namespace相通"><a href="#通过实现linux的network-namespace实现两个namespace相通" class="headerlink" title="通过实现linux的network namespace实现两个namespace相通"></a>通过实现linux的network namespace实现两个namespace相通</h2><p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/1.png" alt="1"></p>
+<h2 id="通过实现linux的network-namespace实现两个namespace相通"><a href="#通过实现linux的network-namespace实现两个namespace相通" class="headerlink" title="通过实现linux的network namespace实现两个namespace相通"></a>通过实现linux的network namespace实现两个namespace相通</h2><p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/1.png" alt="1"></p>
 <h3 id="创建两个network-namespace"><a href="#创建两个network-namespace" class="headerlink" title="创建两个network namespace"></a>创建两个network namespace</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo<span class="built_in"> ip </span>netns <span class="built_in">add</span> test1</span><br><span class="line">sudo<span class="built_in"> ip </span>netns <span class="built_in">add</span> test2</span><br><span class="line">sudo<span class="built_in"> ip </span>link <span class="built_in">add</span> veth-test1<span class="built_in"> type </span>veth<span class="built_in"> peer </span>name veth-test2</span><br></pre></td></tr></table></figure>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/2.png" alt="2"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/2.png" alt="2"></p>
 <h3 id="linux下查看network-namespace"><a href="#linux下查看network-namespace" class="headerlink" title="linux下查看network namespace"></a>linux下查看network namespace</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip <span class="built_in">link</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/3.png" alt="3"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/3.png" alt="3"></p>
 <p>可以看到多了两个命名空间，但是只有mac地址，没有ip地址，而且他们现在的状态都是down的</p>
 <h3 id="将veth-test1接口添加到test1上去，同时将veth-test2接口添加到test2上去"><a href="#将veth-test1接口添加到test1上去，同时将veth-test2接口添加到test2上去" class="headerlink" title="将veth-test1接口添加到test1上去，同时将veth-test2接口添加到test2上去"></a>将veth-test1接口添加到test1上去，同时将veth-test2接口添加到test2上去</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo<span class="built_in"> ip </span>link <span class="built_in">set</span> veth-test1 netns test1</span><br></pre></td></tr></table></figure>
 
-<p>然后可以看到本地的network namespace少了一个<br><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/4.png" alt="4"><br>同时在test1的命名空间里，多了一个<br><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/5.png" alt="5"></p>
+<p>然后可以看到本地的network namespace少了一个<br><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/4.png" alt="4"><br>同时在test1的命名空间里，多了一个<br><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/5.png" alt="5"></p>
 <h3 id="test2同理"><a href="#test2同理" class="headerlink" title="test2同理"></a>test2同理</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo<span class="built_in"> ip </span>link <span class="built_in">set</span> veth-test2 netns test2</span><br></pre></td></tr></table></figure>
 
-<h3 id="此时两者的状态"><a href="#此时两者的状态" class="headerlink" title="此时两者的状态"></a>此时两者的状态</h3><p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/6.png" alt="6"><br>还是没有ip地址，只有mac地址</p>
+<h3 id="此时两者的状态"><a href="#此时两者的状态" class="headerlink" title="此时两者的状态"></a>此时两者的状态</h3><p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/6.png" alt="6"><br>还是没有ip地址，只有mac地址</p>
 <h3 id="分配ip地址"><a href="#分配ip地址" class="headerlink" title="分配ip地址"></a>分配ip地址</h3><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">sudo</span> <span class="built_in">ip</span> netns exec test1 <span class="built_in">ip</span> <span class="keyword">addr</span> <span class="keyword">add</span> <span class="number">192</span>.<span class="number">168</span>.<span class="number">1</span>.<span class="number">1</span>/<span class="number">24</span> dev veth-test1</span><br><span class="line"><span class="symbol">sudo</span> <span class="built_in">ip</span> netns exec test2 <span class="built_in">ip</span> <span class="keyword">addr</span> <span class="keyword">add</span> <span class="number">192</span>.<span class="number">168</span>.<span class="number">1</span>.<span class="number">2</span>/<span class="number">24</span> dev veth-test2</span><br></pre></td></tr></table></figure>
 
 <h3 id="将两个veth-test端口启动"><a href="#将两个veth-test端口启动" class="headerlink" title="将两个veth-test端口启动"></a>将两个veth-test端口启动</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo<span class="built_in"> ip </span>netns exec test1<span class="built_in"> ip </span>link <span class="built_in">set</span> dev veth-test1 up</span><br><span class="line">sudo<span class="built_in"> ip </span>netns exec test2<span class="built_in"> ip </span>link <span class="built_in">set</span> dev veth-test2 up</span><br></pre></td></tr></table></figure>
 
-<h3 id="查看两个namespace的ip及状态"><a href="#查看两个namespace的ip及状态" class="headerlink" title="查看两个namespace的ip及状态"></a>查看两个namespace的ip及状态</h3><p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/7.png" alt="7"></p>
+<h3 id="查看两个namespace的ip及状态"><a href="#查看两个namespace的ip及状态" class="headerlink" title="查看两个namespace的ip及状态"></a>查看两个namespace的ip及状态</h3><p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/7.png" alt="7"></p>
 <p>可以看到都有了ip地址，状态都为up。</p>
 <p>可以看到test1能够ping通test2的ip地址</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/8.png" alt="8"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/8.png" alt="8"></p>
 <p><strong>这个实验与docker的container网络实现的原理类似。我们创建一个容器，随之也会创建属于这个容器的network namespace</strong></p>
 <h2 id="Docker的网络实现"><a href="#Docker的网络实现" class="headerlink" title="Docker的网络实现"></a>Docker的网络实现</h2><p>我现在有一个容器，基于busybox的一个微型image构建的容器</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/11.png" alt="11"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/11.png" alt="11"></p>
 <p>查看docker的network</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/12.png" alt="12"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/12.png" alt="12"></p>
 <p>查看docker的network的详细信息</p>
 <figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">docker</span> <span class="variable">network</span> <span class="variable">inspect</span> <span class="function"><span class="title">a11a8b74c466</span>(<span class="variable">network</span>的<span class="variable">id</span>)</span></span><br></pre></td></tr></table></figure>
 
 <p>在输出的信息里面会看到关于test1的相关信息</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/13.png" alt="13"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/13.png" alt="13"></p>
 <p>我们可以知道test1的container连接到了bridge的网络上面。</p>
 <p>查看本机的ip信息</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/14.png" alt="14"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/14.png" alt="14"></p>
 <p>再来查看test1的container的ip相关信息</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/15.png" alt="15"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/15.png" alt="15"></p>
 <p>给结论：<strong>test1的eth0@if6与本机的veth821ee0b@if5相对应，container最终要映射到本机的docker0的network namespace上去</strong></p>
 <h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="安装bridge-utils"><a href="#安装bridge-utils" class="headerlink" title="安装bridge-utils"></a>安装bridge-utils</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> bridge-utils</span><br></pre></td></tr></table></figure>
 
-<h4 id="运行命令：brctl-show"><a href="#运行命令：brctl-show" class="headerlink" title="运行命令：brctl show"></a>运行命令：<code>brctl show</code></h4><p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/16.png" alt="16"></p>
+<h4 id="运行命令：brctl-show"><a href="#运行命令：brctl-show" class="headerlink" title="运行命令：brctl show"></a>运行命令：<code>brctl show</code></h4><p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/16.png" alt="16"></p>
 <p>可以看到我们的veth821ee0b接口连接到了docker0的namespace上 </p>
 <h4 id="现在我们再创建一个容器："><a href="#现在我们再创建一个容器：" class="headerlink" title="现在我们再创建一个容器："></a>现在我们再创建一个容器：</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d --name test2 busybox <span class="regexp">/bin/</span>sh -c <span class="string">&quot;while true; do sleep 3600; done&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p>再次查看网络信息，可以看到多了一个接口</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/17.png" alt="17"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/17.png" alt="17"></p>
 <p>然后看到bridge可以对应到两个container</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/18.png" alt="18"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/18.png" alt="18"></p>
 <p>再来运行命令：<code>brctl show</code></p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/19.png" alt="19"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/19.png" alt="19"></p>
 <p>可以看到我们的veth821ee0b接口以及vethbbbd3b9都连接到了docker0的namespace上 </p>
-<h4 id="实现原理的拓扑图"><a href="#实现原理的拓扑图" class="headerlink" title="实现原理的拓扑图"></a>实现原理的拓扑图</h4><p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/21.png" alt="21"></p>
+<h4 id="实现原理的拓扑图"><a href="#实现原理的拓扑图" class="headerlink" title="实现原理的拓扑图"></a>实现原理的拓扑图</h4><p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/21.png" alt="21"></p>
 <p>两个容器分别是两个不同的network namespace，两者通过docker0进行连接。</p>
 <p>单个容器如何访问外网？<strong>通过本机的docker0的network namespace</strong></p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/22.png" alt="22"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/22.png" alt="22"></p>
 <h2 id="容器之间的link"><a href="#容器之间的link" class="headerlink" title="容器之间的link"></a>容器之间的link</h2><p>在实际项目中我们不能总是依赖于ip地址，如果容器之间需要相互访问还可以通过另外一种方式:<strong>link</strong></p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="keyword">run</span><span class="language-bash"> -d --name test2 --<span class="built_in">link</span> test1 busybox /bin/sh -c <span class="string">&quot;while true; do sleep 3600; done&quot;</span></span></span><br></pre></td></tr></table></figure>
-<p>在我们创建容器的时候加参数：<code>--link [容器名]</code><br>即可在我们的容器中不仅可以通过ip地址访问我们想要访问的ip，还可以通过容器名访问<br><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/23.png" alt="23"><br>我们在容器创建的时候就已经指定了对应的容器了。<br>反过来，在test1里面，如果想访问test2的话是不行的，link是单向的，不是双向的<br>link用的其实并不多。</p>
+<p>在我们创建容器的时候加参数：<code>--link [容器名]</code><br>即可在我们的容器中不仅可以通过ip地址访问我们想要访问的ip，还可以通过容器名访问<br><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/23.png" alt="23"><br>我们在容器创建的时候就已经指定了对应的容器了。<br>反过来，在test1里面，如果想访问test2的话是不行的，link是单向的，不是双向的<br>link用的其实并不多。</p>
 <h2 id="让容器不连接bridge，连接自定义的network-namespace"><a href="#让容器不连接bridge，连接自定义的network-namespace" class="headerlink" title="让容器不连接bridge，连接自定义的network namespace"></a>让容器不连接bridge，连接自定义的network namespace</h2><p>重新构建test2容器</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/24.png" alt="24"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/24.png" alt="24"></p>
 <h3 id="新建network"><a href="#新建network" class="headerlink" title="新建network"></a>新建network</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker<span class="built_in"> network </span>create -d<span class="built_in"> bridge </span>my-bridge</span><br></pre></td></tr></table></figure>
 
 <p>可以看到多了一个my-bridge</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/25.png" alt="25"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/25.png" alt="25"></p>
 <h3 id="新建容器指定连接我自定义的network"><a href="#新建容器指定连接我自定义的network" class="headerlink" title="新建容器指定连接我自定义的network"></a>新建容器指定连接我自定义的network</h3><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d <span class="params">--name</span> test3 <span class="params">--network</span> my-bridge busybox <span class="string">/bin/sh</span> -c <span class="string">&quot;while true; do sleep 3600; done&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/26.png" alt="26"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/26.png" alt="26"></p>
 <p>可以看到有了interface，在创建test3之前是没有interface的</p>
 <h3 id="修改test1和test2连接的network"><a href="#修改test1和test2连接的network" class="headerlink" title="修改test1和test2连接的network"></a>修改test1和test2连接的network</h3><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker network <span class="keyword">connect</span> <span class="keyword">my</span>-bridge test2</span><br></pre></td></tr></table></figure>
 
-<p>查看my-bridge的信息<br><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/27.png" alt="27"><br>查看bridge的信息<br><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/28.png" alt="28"><br>可以看到test2既连接到了bridge上，又连接到了my-bridge上<br><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/29.png" alt="29"></p>
+<p>查看my-bridge的信息<br><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/27.png" alt="27"><br>查看bridge的信息<br><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/28.png" alt="28"><br>可以看到test2既连接到了bridge上，又连接到了my-bridge上<br><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/29.png" alt="29"></p>
 <p>在test2上既可以通过ip地址访问test3，又可以通过test3的名称访问test3，这是因为在用户自定义的bridge上的所有容器之间都是默认加了link去进行相互之间的访问的，而且是双向的。这就是系统默认的bridge和用户自定义bridge的区别，在系统默认的bridge上的container默认是不支持link连接的。</p>
 <h2 id="容器的端口映射"><a href="#容器的端口映射" class="headerlink" title="容器的端口映射"></a>容器的端口映射</h2><h3 id="创建一个nginx容器"><a href="#创建一个nginx容器" class="headerlink" title="创建一个nginx容器"></a>创建一个nginx容器</h3><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="built_in">run</span> <span class="comment">--name web -d nginx</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="查看ngingx的ip地址"><a href="#查看ngingx的ip地址" class="headerlink" title="查看ngingx的ip地址"></a>查看ngingx的ip地址</h3><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo docker network inspect bridge</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/31.png" alt="31"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/31.png" alt="31"></p>
 <p>为172.17.0.4</p>
-<h3 id="访问nginx"><a href="#访问nginx" class="headerlink" title="访问nginx"></a>访问nginx</h3><p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/32.png" alt="32"></p>
+<h3 id="访问nginx"><a href="#访问nginx" class="headerlink" title="访问nginx"></a>访问nginx</h3><p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/32.png" alt="32"></p>
 <p>可以访问到</p>
 <p><strong>如何让我的docker-node1对外提供nginx服务呢？就是端口映射</strong></p>
 <h3 id="停止并删除web（nginx）容器"><a href="#停止并删除web（nginx）容器" class="headerlink" title="停止并删除web（nginx）容器"></a>停止并删除web（nginx）容器</h3><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker stop web</span><br><span class="line">sudo docker rm web</span><br></pre></td></tr></table></figure>
 
 <h3 id="重新构建，但是要加参数"><a href="#重新构建，但是要加参数" class="headerlink" title="重新构建，但是要加参数"></a>重新构建，但是要加参数</h3><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo</span> docker run --name web -d -p <span class="number">80</span>:<span class="number">80</span> nginx</span><br></pre></td></tr></table></figure>
 
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/33.png" alt="33"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/33.png" alt="33"></p>
 <p>由于我在构建的时候指定了我的docker-node1的ip地址为192.168.205.10，所以在我本地的浏览器中访问<a target="_blank" rel="noopener" href="http://192.168.205.10/%EF%BC%8C%E5%8D%B3%E5%8F%AF">http://192.168.205.10/，即可</a></p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/34.png" alt="34"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/34.png" alt="34"></p>
 <h2 id="none-network"><a href="#none-network" class="headerlink" title="none network"></a>none network</h2><h3 id="新建一个连接到none的network的容器"><a href="#新建一个连接到none的network的容器" class="headerlink" title="新建一个连接到none的network的容器"></a>新建一个连接到none的network的容器</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d <span class="attr">--name</span> <span class="attribute">none</span>-test <span class="attr">--network</span> <span class="attribute">none</span> busybox /bin/sh -c &quot;while true;do sleep <span class="number">3600</span>;done&quot;</span><br></pre></td></tr></table></figure>
 
 <h3 id="查看none的状态"><a href="#查看none的状态" class="headerlink" title="查看none的状态"></a>查看none的状态</h3><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo</span> docker network inspect <span class="literal">none</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/35.png" alt="35"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/35.png" alt="35"></p>
 <p>可以看到没有任何的mac的地址和IP地址</p>
 <h3 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h3><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker exec -<span class="keyword">it</span> <span class="literal">none</span>-test /bin/sh</span><br><span class="line">ip <span class="keyword">a</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/36.png" alt="36"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/36.png" alt="36"></p>
 <p>没有任何接口和地址</p>
 <h3 id="它的作用？"><a href="#它的作用？" class="headerlink" title="它的作用？"></a>它的作用？</h3><p>可能是在存储一些密码等敏感信息的时候出于安全性考虑只有在容器内部才能进行访问的时候才用这种模式（只是猜测）。对外提供不了服务</p>
 <h2 id="host方式"><a href="#host方式" class="headerlink" title="host方式"></a>host方式</h2><h3 id="新建一个连接到none的network的容器-1"><a href="#新建一个连接到none的network的容器-1" class="headerlink" title="新建一个连接到none的network的容器"></a>新建一个连接到none的network的容器</h3><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d <span class="params">--name</span> host-test <span class="params">--network</span> host busybox <span class="string">/bin/sh</span> -c <span class="string">&quot;while true;do sleep 3600;done&quot;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="查看none的状态-1"><a href="#查看none的状态-1" class="headerlink" title="查看none的状态"></a>查看none的状态</h3><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo docker network inspect host</span></span><br></pre></td></tr></table></figure>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/37.png" alt="37"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/37.png" alt="37"></p>
 <p>同样，也没有任何ip地址和mac地址</p>
 <h3 id="进入容器-1"><a href="#进入容器-1" class="headerlink" title="进入容器"></a>进入容器</h3><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker exec -<span class="keyword">it</span> <span class="literal">none</span>-test /bin/sh</span><br><span class="line">ip <span class="keyword">a</span></span><br></pre></td></tr></table></figure>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/38.png" alt="38"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/38.png" alt="38"></p>
 <p>可以看到与容器的ip状态是一致的</p>
 <p>这个容器没有自己的独立的network namespace，它是与我的主机所在的network namespace共享一套。</p>
 <p>通过这种方式构建的容器带来的问题：<br><strong>由于是与容器主机共享的network namespace，意味着端口可能会冲突。比如创建两个nginx的container，都绑定到host的network上去，就会出问题</strong></p>
@@ -557,13 +544,13 @@
 <h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="built_in">run</span> -d --link redis -p 5000:5000 --name fast-redis -e <span class="attribute">REDIS_HOST</span>=redis jinping/flask-redis</span><br></pre></td></tr></table></figure>
 <h3 id="进入服务，可以看到环境变量"><a href="#进入服务，可以看到环境变量" class="headerlink" title="进入服务，可以看到环境变量"></a>进入服务，可以看到环境变量</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it fast-redis /bin/sh</span><br><span class="line"><span class="built_in">env</span></span><br></pre></td></tr></table></figure>
 <p><strong>-e 是设置环境变量的</strong></p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/39.png" alt="39"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/39.png" alt="39"></p>
 <p>在我们当前容器的内部，是能够ping通redis的</p>
 <p>所以当我们执行curl 127.0.0.1:5000时，可以输出相应的pv</p>
 <p>当我回到我的vagrant时,由于在容器中指定了端口映射，所以一样可以输出pv</p>
-<p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/41.png" alt="41"></p>
-<p><strong>推荐：一个模块一个容器，只要搞清楚他们之间的部署关系就可以了</strong><br><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/42.png" alt="42"></p>
-<h2 id="处于不同的linux机器间的docker通信"><a href="#处于不同的linux机器间的docker通信" class="headerlink" title="处于不同的linux机器间的docker通信"></a>处于不同的linux机器间的docker通信</h2><p><img src="Docker(%E5%9B%9B)Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/43.png" alt="43"></p>
+<p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/41.png" alt="41"></p>
+<p><strong>推荐：一个模块一个容器，只要搞清楚他们之间的部署关系就可以了</strong><br><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/42.png" alt="42"></p>
+<h2 id="处于不同的linux机器间的docker通信"><a href="#处于不同的linux机器间的docker通信" class="headerlink" title="处于不同的linux机器间的docker通信"></a>处于不同的linux机器间的docker通信</h2><p><img src="/2021/01/17/Docker-%E5%9B%9B-Docker%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4/43.png" alt="43"></p>
 <p>VXLAN的方式<br>分布式存储：etcd<br><a target="_blank" rel="noopener" href="https://github.com/docker/labs/blob/master/networking/concepts/06-overlay-networks.md">https://github.com/docker/labs/blob/master/networking/concepts/06-overlay-networks.md</a></p>
 
       

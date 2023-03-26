@@ -25,14 +25,14 @@
 <meta property="og:site_name" content="代码乐园">
 <meta property="og:description" content="Redis里面使用intset是为了实现集合(set)这种对外的数据结构。set结构类似于数学上的集合的概念，它包含的元素无序，且不能重复。Redis里的set结构还实现了基础的集合并、交、差的操作。与Redis对外暴露的其它数据结构类似，set的底层实现，随着元素类型是否是整型以及添加的元素的数目多少，而有所变化。概括来讲，当set中添加的元素都是整型且元素数目较少时，set使用intset">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_intset_add_example.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_set_cmd_example.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_intset_add_example.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_set_cmd_example.png">
 <meta property="article:published_time" content="2020-11-26T09:43:03.000Z">
 <meta property="article:modified_time" content="2021-12-06T09:23:00.881Z">
 <meta property="article:author" content="JinPing">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_intset_add_example.png">
+<meta name="twitter:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_intset_add_example.png">
   <!-- Canonical links -->
   <link rel="canonical" href="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/index.html">
   
@@ -152,26 +152,6 @@
         </li>
         
         
-        <li class="menu-item menu-item-books">
-          <a href="/books">
-            
-            <i class="icon icon-book-fill"></i>
-            
-            <span class="menu-title">书单</span>
-          </a>
-        </li>
-        
-        
-        <li class="menu-item menu-item-links">
-          <a href="/links">
-            
-            <i class="icon icon-friendship"></i>
-            
-            <span class="menu-title">友链</span>
-          </a>
-        </li>
-        
-        
         <li class="menu-item menu-item-about">
           <a href="/about">
             
@@ -243,7 +223,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -266,21 +246,6 @@
               </p>
               <p class="item-date">
                 <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
-              </p>
-            </div>
-          </li>
-          
-          <li>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                
-              </p>
-              <p class="item-title">
-                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
               </p>
             </div>
           </li>
@@ -326,6 +291,21 @@
               </p>
               <p class="item-date">
                 <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/22/%E5%A4%A7%E4%BD%9C%E6%96%87/" class="title">大作文</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-22T02:46:31.000Z" itemprop="datePublished">2021-10-22</time>
               </p>
             </div>
           </li>
@@ -390,11 +370,18 @@
     </span>
 
         
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4.2k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 15(分)</span>
+	
+
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <meta name="referrer" content="no-referrer" />
+        <meta name="referrer" content="no-referrer">
 
 <p>Redis里面使用intset是为了实现集合(set)这种对外的数据结构。set结构类似于数学上的集合的概念，它包含的元素无序，且不能重复。Redis里的set结构还实现了基础的集合并、交、差的操作。与Redis对外暴露的其它数据结构类似，set的底层实现，随着元素类型是否是整型以及添加的元素的数目多少，而有所变化。概括来讲，<strong>当set中添加的元素都是整型且元素数目较少时，set使用intset作为底层数据结构，否则，set使用dict作为底层数据结构。</strong></p>
 <p>在本文中我们将大体分成三个部分进行介绍：</p>
@@ -421,7 +408,9 @@
 <li>最开始，新创建的intset使用占内存最小的INTSET_ENC_INT16（值为2）作为数据编码。</li>
 <li>每添加一个新元素，则根据元素大小决定是否对数据编码进行升级。</li>
 </ul>
-<p>下图给出了一个添加数据的具体例子。<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_intset_add_example.png" alt="redis_intset_add_example"></p>
+<p>下图给出了一个添加数据的具体例子。</p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_intset_add_example.png" class title="redis_intset_add_example">
+
 <p>在上图中：</p>
 <ul>
 <li>新创建的intset只有一个header，总共8个字节。其中encoding = 2, length = 0。</li>
@@ -466,7 +455,9 @@
 <li>注意一下intsetAdd的返回值，它返回一个新的intset指针。它可能与传入的intset指针is相同，也可能不同。调用方必须用这里返回的新的intset，替换之前传进来的旧的intset变量。类似这种接口使用模式，在Redis的实现代码中是很常见的，比如我们之前在介绍sds和ziplist的时候都碰到过类似的情况。</li>
 <li>显然，这个intsetAdd算法总的时间复杂度为O(n)。</li>
 </ul>
-<h3 id="Redis的set"><a href="#Redis的set" class="headerlink" title="Redis的set"></a>Redis的set</h3><p>为了更好地理解Redis对外暴露的set数据结构，我们先看一下set的一些关键的命令。下面是一些命令举例：<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_set_cmd_example.png" alt="redis_set_cmd_example"></p>
+<h3 id="Redis的set"><a href="#Redis的set" class="headerlink" title="Redis的set"></a>Redis的set</h3><p>为了更好地理解Redis对外暴露的set数据结构，我们先看一下set的一些关键的命令。下面是一些命令举例：</p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-7-intset/redis_set_cmd_example.png" class title="redis_set_cmd_example">
+
 <p>上面这些命令的含义：</p>
 <ul>
 <li>sadd用于分别向集合s1和s2中添加元素。添加的元素既有数字，也有非数字（”a”和”b”）。</li>

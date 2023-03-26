@@ -25,22 +25,22 @@
 <meta property="og:site_name" content="代码乐园">
 <meta property="og:description" content="Redis里面使用skiplist是为了实现&#96;sorted set&#96;这种对外的数据结构。sorted set提供的操作非常丰富，可以满足非常多的应用场景。  我们将大体分成三个部分进行介绍：  介绍经典的skiplist数据结构，并进行简单的算法分析。这一部分的介绍，与Redis没有直接关系。我会尝试尽量使用通俗易懂的语言进行描述。 讨论Redis里的skiplist的具体实现。为了支持sort">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_linked_list.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skip2node_linked_list.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/search_path_on_skip2node_list.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skip2node_level3_linked_list.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_insertions.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/search_path_on_skiplist.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_avg_level.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_backwards.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_set_cmd_examples.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis_skiplist_example.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_linked_list.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skip2node_linked_list.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/search_path_on_skip2node_list.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skip2node_level3_linked_list.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_insertions.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/search_path_on_skiplist.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_avg_level.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_backwards.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_set_cmd_examples.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis_skiplist_example.png">
 <meta property="article:published_time" content="2020-11-26T09:01:25.000Z">
 <meta property="article:modified_time" content="2021-12-06T09:23:00.876Z">
 <meta property="article:author" content="JinPing">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_linked_list.png">
+<meta name="twitter:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_linked_list.png">
   <!-- Canonical links -->
   <link rel="canonical" href="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/index.html">
   
@@ -160,26 +160,6 @@
         </li>
         
         
-        <li class="menu-item menu-item-books">
-          <a href="/books">
-            
-            <i class="icon icon-book-fill"></i>
-            
-            <span class="menu-title">书单</span>
-          </a>
-        </li>
-        
-        
-        <li class="menu-item menu-item-links">
-          <a href="/links">
-            
-            <i class="icon icon-friendship"></i>
-            
-            <span class="menu-title">友链</span>
-          </a>
-        </li>
-        
-        
         <li class="menu-item menu-item-about">
           <a href="/about">
             
@@ -251,7 +231,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -274,21 +254,6 @@
               </p>
               <p class="item-date">
                 <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
-              </p>
-            </div>
-          </li>
-          
-          <li>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                
-              </p>
-              <p class="item-title">
-                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
               </p>
             </div>
           </li>
@@ -334,6 +299,21 @@
               </p>
               <p class="item-date">
                 <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/22/%E5%A4%A7%E4%BD%9C%E6%96%87/" class="title">大作文</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-22T02:46:31.000Z" itemprop="datePublished">2021-10-22</time>
               </p>
             </div>
           </li>
@@ -398,11 +378,18 @@
     </span>
 
         
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 6.8k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 24(分)</span>
+	
+
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <meta name="referrer" content="no-referrer" />
+        <meta name="referrer" content="no-referrer">
 Redis里面使用skiplist是为了实现`sorted set`这种对外的数据结构。sorted set提供的操作非常丰富，可以满足非常多的应用场景。
 
 <p>我们将大体分成三个部分进行介绍：</p>
@@ -418,11 +405,15 @@ Redis里面使用skiplist是为了实现`sorted set`这种对外的数据结构�
 <h3 id="Skip-List数据结构简介"><a href="#Skip-List数据结构简介" class="headerlink" title="Skip List数据结构简介"></a>Skip List数据结构简介</h3><p>skiplist本质上也是一种查找结构，用于解决算法中的查找问题（Searching），即根据给定的key，快速查到它所在的位置（或者对应的value）。</p>
 <p>一般查找问题的解法分为两个大类：一个是基于各种平衡树，一个是基于哈希表。但skiplist却比较特殊，它没法归属到这两大类里面。</p>
 <p><strong>skiplist</strong>，顾名思义，首先它是一个list。实际上，它是在有序链表的基础上发展起来的。</p>
-<p>我们先来看一个有序链表，如下图（最左侧的灰色节点表示一个空的头结点）：<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_linked_list.png" alt="sorted_linked_list"></p>
+<p>我们先来看一个有序链表，如下图（最左侧的灰色节点表示一个空的头结点）：</p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_linked_list.png" class title="sorted_linked_list">
+
 <p>在这样一个链表中，如果我们要查找某个数据，那么需要从头开始逐个进行比较，直到找到包含数据的那个节点，或者找到第一个比给定数据大的节点为止（没找到）。也就是说，时间复杂度为O(n)。同样，当我们要插入新数据的时候，也要经历同样的查找过程，从而确定插入位置。</p>
-<p>假如我们每相邻两个节点增加一个指针，让指针指向<code>下下个节点</code>，如下图：<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skip2node_linked_list.png" alt="skip2node_linked_list"></p>
+<p>假如我们每相邻两个节点增加一个指针，让指针指向<code>下下个节点</code>，如下图：</p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skip2node_linked_list.png" class title="skip2node_linked_list">
+
 <p>这样所有新增加的指针连成了一个新的链表，但它包含的节点个数只有原来的一半（上图中是7, 19, 26）。现在当我们想查找数据的时候，可以先沿着这个新链表进行查找。当碰到比待查数据大的节点时，再回到原来的链表中进行查找。比如，我们想查找23，查找的路径是沿着下图中标红的指针所指向的方向进行的：</p>
-<p><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/search_path_on_skip2node_list.png" alt="search_path_on_skip2node_list"></p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/search_path_on_skip2node_list.png" class title="search_path_on_skip2node_list">
 <ul>
 <li>23首先和7比较，再和19比较，比它们都大，继续向后比较。</li>
 <li>但23和26比较的时候，比26要小，因此回到下面的链表（原链表），与22比较。</li>
@@ -430,15 +421,18 @@ Redis里面使用skiplist是为了实现`sorted set`这种对外的数据结构�
 </ul>
 <p>在这个查找过程中，由于新增加的指针，我们不再需要与链表中每个节点逐个进行比较了。需要比较的节点数大概只有原来的一半。</p>
 <p>利用同样的方式，我们可以在上层新产生的链表上，继续为每相邻的两个节点增加一个指针，从而产生第三层链表。如下图：</p>
-<p><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skip2node_level3_linked_list.png" alt="skip2node_level3_linked_list"></p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skip2node_level3_linked_list.png" class title="skip2node_level3_linked_list">
+
 <p>在这个新的三层链表结构上，如果我们还是查找23，那么沿着最上层链表首先要比较的是19，发现23比19大，接下来我们就知道只需要到19的后面去继续查找，从而一下子跳过了19前面的所有节点。可以想象，当链表足够长的时候，这种多层链表的查找方式能让我们跳过很多下层节点，大大加快查找的速度。</p>
 <p>skiplist正是受这种多层链表的想法的启发而设计出来的。实际上，按照上面生成链表的方式，上面每一层链表的节点个数，是下面一层的节点个数的一半，这样查找过程就非常类似于一个二分查找，使得查找的时间复杂度可以降低到O(log n)。但是，这种方法在插入数据的时候有很大的问题。新插入一个节点之后，就会打乱上下相邻两层链表上节点个数严格的2:1的对应关系。如果要维持这种对应关系，就必须把新插入的节点后面的所有节点（也包括新插入的节点）重新进行调整，这会让时间复杂度重新蜕化成O(n)。删除数据也有同样的问题。</p>
 <p>skiplist为了避免这一问题，它不要求上下相邻两层链表之间的节点个数有严格的对应关系，而是为每个节点随机出一个层数(level)。比如，一个节点随机出的层数是3，那么就把它链入到第1层到第3层这三层链表中。为了表达清楚，下图展示了如何通过一步步的插入操作从而形成一个skiplist的过程：</p>
-<p><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_insertions.png" alt="skiplist_insertions"></p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_insertions.png" class title="skiplist_insertions">
+
 <p>从上面skiplist的创建和插入过程可以看出，每一个节点的层数（level）是随机出来的，而且新插入一个节点不会影响其它节点的层数。因此，插入操作只需要修改插入节点前后的指针，而不需要对很多节点都进行调整。这就降低了插入操作的复杂度。实际上，这是skiplist的一个很重要的特性，这让它在插入性能上明显优于平衡树的方案。这在后面我们还会提到。</p>
 <p>根据上图中的skiplist结构，我们很容易理解这种数据结构的名字的由来。skiplist，翻译成中文，可以翻译成“跳表”或“跳跃表”，指的就是除了最下面第1层链表之外，它会产生若干层稀疏的链表，这些链表里面的指针故意跳过了一些节点（而且越高层的链表跳过的节点越多）。这就使得我们在查找数据的时候能够先在高层的链表中进行查找，然后逐层降低，最终降到第1层链表来精确地确定数据位置。在这个过程中，我们跳过了一些节点，从而也就加快了查找速度。</p>
 <p>刚刚创建的这个skiplist总共包含4层链表，现在假设我们在它里面依然查找23，下图给出了查找路径：</p>
-<p><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/search_path_on_skiplist.png" alt="search_path_on_skiplist"></p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/search_path_on_skiplist.png" class title="search_path_on_skiplist">
+
 <p>需要注意的是，前面演示的各个节点的插入过程，实际上在插入之前也要先经历一个类似的查找过程，在确定插入位置后，再完成插入操作。</p>
 <p>至此，skiplist的查找和插入操作，我们已经很清楚了。而删除操作与插入操作类似，我们也很容易想象出来。这些操作我们也应该能很容易地用代码实现出来。</p>
 <p>当然，实际应用中的skiplist每个节点应该包含key和value两部分。前面的描述中我们没有具体区分key和value，但实际上列表中是按照key进行排序的，查找过程也是根据key在比较。</p>
@@ -462,7 +456,7 @@ Redis里面使用skiplist是为了实现`sorted set`这种对外的数据结构�
 <li>节点层数大于等于2的概率为p，而节点层数恰好等于2的概率为p(1-p)。</li>
 <li>节点层数大于等于3的概率为p2，而节点层数恰好等于3的概率为p2(1-p)。</li>
 <li>节点层数大于等于4的概率为p3，而节点层数恰好等于4的概率为p3(1-p)。</li>
-<li>……<br>因此，一个节点的平均层数（也即包含的平均指针数目），计算如下：<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_avg_level.png" alt="skiplist_avg_level"></li>
+<li>……<br>因此，一个节点的平均层数（也即包含的平均指针数目），计算如下：<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_avg_level.png" class title="skiplist_avg_level"></li>
 </ul>
 <p>现在很容易计算出：</p>
 <ul>
@@ -475,7 +469,7 @@ Redis里面使用skiplist是为了实现`sorted set`这种对外的数据结构�
 <p>现在假设我们从一个层数为i的节点x出发，需要向左向上攀爬k层。这时我们有两种可能：</p>
 <ul>
 <li>如果节点x有第(i+1)层指针，那么我们需要向上走。这种情况概率为p。</li>
-<li>如果节点x没有第(i+1)层指针，那么我们需要向左走。这种情况概率为(1-p)。<br>这两种情形如下图所示：<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_backwards.png" alt="skiplist_backwards"></li>
+<li>如果节点x没有第(i+1)层指针，那么我们需要向左走。这种情况概率为(1-p)。<br>这两种情形如下图所示：<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/skiplist_backwards.png" class title="skiplist_backwards"></li>
 </ul>
 <p>用C(k)表示向上攀爬k个层级所需要走过的平均查找路径长度（概率期望），那么：</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">C</span><span class="params">(<span class="number">0</span>)</span></span>=<span class="number">0</span></span><br><span class="line"><span class="function"><span class="title">C</span><span class="params">(k)</span></span>=(<span class="number">1</span>-p)×(上图中情况b的查找长度) + p×(上图中情况c的查找长度)</span><br></pre></td></tr></table></figure>
@@ -507,7 +501,9 @@ Redis里面使用skiplist是为了实现`sorted set`这种对外的数据结构�
 <p>sorted set是一个有序的数据集合，对于像类似排行榜这样的应用场景特别适合。</p>
 <p>现在我们来看一个例子，用sorted set来存储代数课（algebra）的成绩表。原始数据如下：</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Alice</span> <span class="number">87</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">Bob</span> <span class="number">89</span>.<span class="number">0</span></span><br><span class="line"><span class="attribute">Charles</span> <span class="number">65</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">David</span> <span class="number">78</span>.<span class="number">0</span></span><br><span class="line"><span class="attribute">Emily</span> <span class="number">93</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">Fred</span> <span class="number">87</span>.<span class="number">5</span></span><br></pre></td></tr></table></figure>
-<p>这份数据给出了每位同学的名字和分数。下面我们将这份数据存储到sorted set里面去：<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_set_cmd_examples.png" alt="sorted_set_cmd_examples"></p>
+<p>这份数据给出了每位同学的名字和分数。下面我们将这份数据存储到sorted set里面去：</p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/sorted_set_cmd_examples.png" class title="sorted_set_cmd_examples">
+
 <p>对于上面的这些命令，我们需要的注意的地方包括：</p>
 <ul>
 <li>前面的6个zadd命令，将6位同学的名字和分数(score)都输入到一个key值为algebra的sorted set里面了。注意Alice和Fred的分数相同，都是87.5分。</li>
@@ -571,7 +567,9 @@ Redis里面使用skiplist是为了实现`sorted set`这种对外的数据结构�
 </ul>
 </li>
 </ul>
-<p>下图以前面插入的代数课成绩表为例，展示了Redis中一个skiplist的可能结构：<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis_skiplist_example.png" alt="redis_skiplist_example"></p>
+<p>下图以前面插入的代数课成绩表为例，展示了Redis中一个skiplist的可能结构：</p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-6-skiplist/redis_skiplist_example.png" class title="redis_skiplist_example">
+
 <p>注意：图中前向指针上面括号中的数字，表示对应的span的值。即当前指针跨越了多少个节点，这个计数不包括指针的起点节点，但包括指针的终点节点。</p>
 <p>假设我们在这个skiplist中查找score=89.0的元素（即Bob的成绩数据），在查找路径中，我们会跨域图中标红的指针，这些指针上面的span值累加起来，就得到了Bob的排名(2+2+1)-1=4（减1是因为rank值以0起始）。需要注意这里算的是从小到大的排名，而如果要算从大到小的排名，只需要用skiplist长度减去查找路径上的span累加值，即6-(2+2+1)=1。</p>
 <p>可见，在查找skiplist的过程中，通过累加span值的方式，我们就能很容易算出排名。相反，如果指定排名来查找数据（类似zrange和zrevrange那样），也可以不断累加span并时刻保持累加值不超过指定的排名，通过这种方式就能得到一条O(log n)的查找路径。</p>

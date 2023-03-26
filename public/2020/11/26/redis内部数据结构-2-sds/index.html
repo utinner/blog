@@ -25,14 +25,14 @@
 <meta property="og:site_name" content="代码乐园">
 <meta property="og:description" content="不管在哪门编程语言当中，字符串都几乎是使用最多的数据结构。sds正是在Redis中被广泛使用的字符串结构，它的全称是Simple Dynamic String。与其它语言环境中出现的字符串相比，它具有如下显著的特点：   可动态扩展内存。sds表示的字符串其内容可以修改，也可以追加。在很多语言中字符串会分为mutable和immutable两种，显然sds属于mutable类型的。 二进制安全（">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/demo.png">
-<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/redis_sds_structure.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/demo.png">
+<meta property="og:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/redis_sds_structure.png">
 <meta property="article:published_time" content="2020-11-26T06:56:41.000Z">
 <meta property="article:modified_time" content="2021-12-06T09:23:00.872Z">
 <meta property="article:author" content="JinPing">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/demo.png">
+<meta name="twitter:image" content="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/demo.png">
   <!-- Canonical links -->
   <link rel="canonical" href="https://utinner.gitee.io/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/index.html">
   
@@ -152,26 +152,6 @@
         </li>
         
         
-        <li class="menu-item menu-item-books">
-          <a href="/books">
-            
-            <i class="icon icon-book-fill"></i>
-            
-            <span class="menu-title">书单</span>
-          </a>
-        </li>
-        
-        
-        <li class="menu-item menu-item-links">
-          <a href="/links">
-            
-            <i class="icon icon-friendship"></i>
-            
-            <span class="menu-title">友链</span>
-          </a>
-        </li>
-        
-        
         <li class="menu-item menu-item-about">
           <a href="/about">
             
@@ -243,7 +223,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -266,21 +246,6 @@
               </p>
               <p class="item-date">
                 <time datetime="2023-03-15T06:49:10.000Z" itemprop="datePublished">2023-03-15</time>
-              </p>
-            </div>
-          </li>
-          
-          <li>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                
-              </p>
-              <p class="item-title">
-                <a href="/2023/03/14/hello-world/" class="title">Hello World</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2023-03-14T11:26:29.627Z" itemprop="datePublished">2023-03-14</time>
               </p>
             </div>
           </li>
@@ -326,6 +291,21 @@
               </p>
               <p class="item-date">
                 <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/22/%E5%A4%A7%E4%BD%9C%E6%96%87/" class="title">大作文</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-22T02:46:31.000Z" itemprop="datePublished">2021-10-22</time>
               </p>
             </div>
           </li>
@@ -390,11 +370,18 @@
     </span>
 
         
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4.5k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 18(分)</span>
+	
+
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <meta name="referrer" content="no-referrer" />
+        <meta name="referrer" content="no-referrer">
 不管在哪门编程语言当中，字符串都几乎是使用最多的数据结构。sds正是在Redis中被广泛使用的字符串结构，它的全称是Simple Dynamic String。与其它语言环境中出现的字符串相比，它具有如下显著的特点：
 
 <ul>
@@ -404,7 +391,9 @@
 </ul>
 <span id="more"></span>
 <p>看到这里，很多对Redis有所了解的同学可能已经产生了一个疑问：Redis已经对外暴露了一个字符串结构，叫做string，那这里所说的sds到底和string是什么关系呢？可能有人会猜：string是基于sds实现的。这个猜想已经非常接近事实，但在描述上还不太准确。有关string和sds之间关系的详细分析，我们放在后面再讲。现在为了方便讨论，让我们先暂时简单地认为，string的底层实现就是sds。</p>
-<p>在讨论sds的具体实现之前，我们先站在Redis使用者的角度，来观察一下string所支持的一些主要操作。下面是一个操作示例：<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/demo.png" alt="demo"><br>以上这些操作都比较简单，我们简单解释一下：</p>
+<p>在讨论sds的具体实现之前，我们先站在Redis使用者的角度，来观察一下string所支持的一些主要操作。下面是一个操作示例：</p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/demo.png" class title="demo">
+<p>以上这些操作都比较简单，我们简单解释一下：</p>
 <ul>
 <li>初始的字符串的值设为”tinner”。</li>
 <li>第3步通过append命令对字符串进行了追加，变成了”tinner jin”。</li>
@@ -432,7 +421,9 @@
 <blockquote>
 <p>#define SDS_TYPE_5  0<br>#define SDS_TYPE_8  1<br>#define SDS_TYPE_16 2<br>#define SDS_TYPE_32 3<br>#define SDS_TYPE_64 4</p>
 </blockquote>
-<p>sds的数据结构，我们有必要非常仔细地去解析它。<br><img src="redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/redis_sds_structure.png" alt="demo"><br>上图是sds的一个内部结构的例子。图中展示了两个sds字符串s1和s2的内存结构，一个使用sdshdr8类型的header，另一个使用sdshdr16类型的header。但它们都表达了同样的一个长度为6的字符串的值：”tielei”。下面我们结合代码，来解释每一部分的组成。</p>
+<p>sds的数据结构，我们有必要非常仔细地去解析它。</p>
+<img src="/2020/11/26/redis%E5%86%85%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-2-sds/redis_sds_structure.png" class title="demo">
+<p>上图是sds的一个内部结构的例子。图中展示了两个sds字符串s1和s2的内存结构，一个使用sdshdr8类型的header，另一个使用sdshdr16类型的header。但它们都表达了同样的一个长度为6的字符串的值：”tielei”。下面我们结合代码，来解释每一部分的组成。</p>
 <p>sds的字符指针（s1和s2）就是指向真正的数据（字符数组）开始的位置，而header位于内存地址较低的方向。在sds.h中有一些跟解析header有关的宏定义：</p>
 <blockquote>
 <p>#define SDS_TYPE_MASK 7<br>#define SDS_TYPE_BITS 3<br>#define SDS_HDR_VAR(T,s) struct sdshdr##T <em>sh = (void</em>)((s)-(sizeof(struct sdshdr##T)));<br>#define SDS_HDR(T,s) ((struct sdshdr##T *)((s)-(sizeof(struct sdshdr##T))))<br>#define SDS_TYPE_5_LEN(f) ((f)&gt;&gt;SDS_TYPE_BITS)</p>
