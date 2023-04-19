@@ -13,7 +13,7 @@ categories: 中间件
 hash-max-ziplist-entries 512
 hash-max-ziplist-value 64
 ```
-<!-- more -->
+ 
 ### 什么是ziplist
 Redis官方对于ziplist的定义是（出自ziplist.c的文件头部注释）：
 

@@ -10,7 +10,7 @@ categories: Java
 Gitflow工作流通过为功能开发、发布准备和维护（bug修复）分配独立的分支，让发布迭代过程更流畅。严格的分支模型也为大型项目提供了一些非常必要的结构。
 ![git工作流](https://upload-images.jianshu.io/upload_images/15200008-5dcea875b5e3537f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 虽然有这么优秀的版本管理工具，但是我们面对版本管理的时候，依然有非常大得挑战，我们都知道大家工作在同一个仓库上，那么彼此的代码协作必然带来很多问题和挑战，如下：
-<!-- more -->
+ 
 - 如何开始一个Feature的开发，而不影响别的Feature？
 - 由于很容易创建新分支，分支多了如何管理，时间久了，如何知道每个分支是干什么的？
 哪些分支已经合并回了主干？

@@ -14,7 +14,7 @@ categories: 考研英语
 n. 工作（量）；职业；产品；**著作**，工作地点
 v. （使）工作有效；<u>产生···作用</u>
 
-<!-- More -->
+ 
 **工作** 
 work placement 实习工作 | work skills 技能
 

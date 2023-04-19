@@ -21,7 +21,7 @@ categories: 运维
 
 **vagrant用于构建虚拟机，virtualbox相当于是一个虚拟机管理工具**
 
-<!--More-->
+  
 
 ##### 相关命令
 

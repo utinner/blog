@@ -9,7 +9,7 @@ categories: 中间件
 
 而从Redis内部实现的角度来看，在前面第一篇文章中，我们已经提到过，一个database内的这个映射关系是用一个dict来维护的。dict的key固定用一种数据结构来表达就够了，这就是动态字符串sds。而value则比较复杂，为了在同一个dict内能够存储不同类型的value，这就需要一个通用的数据结构，这个通用的数据结构就是robj（全名是redisObject）。举个例子：如果value是一个list，那么它的内部存储结构是一个quicklist；如果value是一个string，那么它的内部存储结构一般情况下是一个sds。当然实际情况更复杂一点，比如一个string类型的value，如果它的值是一个数字，那么Redis内部还会把它转成long型来存储，从而减小内存使用。而一个robj既能表示一个sds，也能表示一个quicklist，甚至还能表示一个long型。
 
-<!-- more -->
+ 
 ### robj的数据结构定义
 
 在server.h中我们找到跟robj定义相关的代码，如下（注意，本系列文章中的代码片段全部来源于Redis源码的3.2分支）：

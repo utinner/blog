@@ -13,7 +13,7 @@ categories: 大数据
 - 结果的准确性和良好的容错性
 
 # 二、例子（实现wordCount）
-<!-- more -->
+ 
 
 ```
 package com.xesonline.demo

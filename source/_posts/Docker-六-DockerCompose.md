@@ -24,7 +24,7 @@ docker run -d -e WORDPRESS_DB_HOST=mysql:3306 --link mysql -p 8080:80 wordpress
 - -p就是将容器中的80端口映射到我们本地的8080端口
 
 这个过程就比较复杂，像有些应用有好多个模块我们可能就需要构建好多个container，对它的创建、管理、启动、停止等操作比较繁琐。我们希望可以将多个容器定义成一个组，对这个组进行统一的管理，于是DockerCompose就出现了，DockerCompose就是为了解决这一问题而诞生的。
-<!--More-->
+  
 
 ### DockerCompose
 

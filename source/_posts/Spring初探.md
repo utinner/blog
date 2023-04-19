@@ -6,7 +6,7 @@ categories: Java
 ---
 <meta name="referrer" content="no-referrer" />
 
-<!-- more -->
+ 
 ## 一、Spring发展的几个大致阶段
 
 SpringCore最初应用的是工厂模式（DI）和代理模式（AOP），用来解耦应用组件；SpringMVC用来解决web应用的开发；又发现每次开发都需要写很多配置样板代码，为了更方便地整合引入了SpringBoot一些列stater；SringCloud的意义在于推动了微服务架构的落地。

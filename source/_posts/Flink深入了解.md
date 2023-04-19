@@ -14,7 +14,7 @@ Flink 运行时架构主要包括四个不同的组件，它们会在运行流�
 
 ![Flink深入了解](Flink深入了解/1.jpg)
 
-<!-- more -->
+ 
 
 - **JobManager:** 控制一个应用程序执行的主进程，也就是说， 每个应用程序都会被一个不同的JobManager 所控制执行。JobManager 会先接收到要执行的应用程序，这个应用程序会包括： 作业图（JobGraph）、逻辑数据流图（logical dataflow graph）和打包了所有的类、库和其它资源的 JAR 包。JobManager 会把 JobGraph 转换成一个物理层面的数据流图，这个图被叫做“执行图”（ExecutionGraph），包含了所有可以并发执行的任务。JobManager 会向资源管理器（ResourceManager）请求执行任务必要的资源，也就是任务管理器（TaskManager）上的插槽（ slot）。一旦它获取到了足够的资源，就会将执行图分发到真正运行它们的TaskManager 上。而在运行过程中，JobManager 会负责所有需要中央协调的操作，比如说检查点（checkpoints）的协调。
 - **TaskManager:** Flink 中的工作进程。通常在 Flink 中会有多个 TaskManager 运行，每一个 TaskManager

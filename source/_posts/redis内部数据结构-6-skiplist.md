@@ -18,7 +18,6 @@ zset-max-ziplist-entries 128
 zset-max-ziplist-value 64
 ```
 注：本文讨论的代码实现基于Redis源码的3.2分支。
-<!-- More-->
 ### Skip List数据结构简介
 
 skiplist本质上也是一种查找结构，用于解决算法中的查找问题（Searching），即根据给定的key，快速查到它所在的位置（或者对应的value）。

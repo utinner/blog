@@ -10,7 +10,7 @@ categories: Java
 ```
 git log
 ```
-<!-- more -->
+ 
 这个命令对于提交少的项目比较友好，但是对于提交很多的项目，会输出一大长串，很不方便，于是有一个比较简便的命令：
 ```
 git log --pretty=oneline

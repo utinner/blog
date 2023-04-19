@@ -6,7 +6,7 @@ categories: 中间件
 ---
 <meta name="referrer" content="no-referrer" />
 
-<!-- more -->
+ 
 ## 一、redis和memcache的比较
 
 ### 1. memcache

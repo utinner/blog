@@ -16,7 +16,7 @@ categories: Java
 
 4、两个对象的hashcode相同，并不一定表示两个对象就相同，也就是不一定适用于`equals(java.lang.Object)`方法，只能够说明这两个对象在散列存储结构中，如Hashtable，他们“存放在一个篮子中”。
 
-<!-- More -->
+ 
 **再次归纳一下就是hashCode是用于查找使用的，而equals是用于比较两个对象是否相等的**
 
 ## 关于equals

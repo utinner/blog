@@ -15,7 +15,7 @@ MAVEN项目运行中如果报如下错误：
 ##### 1、依赖传递
 当我们需要A的依赖的时候，就会在pom.xml中引入A的jar包；而引入的A的jar包中可能又依赖B的jar包，这样Maven在解析pom.xml的时候，会依次将A、B 的jar包全部都引入进来。
 
-<!-- more -->
+ 
 
 举个例子：
 在Spring Boot应用中导入Hystrix和原生Guava的jar包：

@@ -12,7 +12,7 @@ Redis对外暴露的list数据类型，它底层实现所依赖的内部数据�
 list-max-ziplist-size -2
 list-compress-depth 0
 ```
-<!-- more -->
+ 
 注：本文讨论的quicklist实现基于Redis源码的3.2分支。
 
 ### quicklist概述

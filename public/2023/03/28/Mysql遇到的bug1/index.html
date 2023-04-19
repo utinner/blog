@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Mysql遇到的bug1 | TinnerのBlog</title>
+  <meta name="description" content="问题背景实际开发过程中遇到一个sql报警： 1select * from order_info where uid &#x3D; 5837661 order by id asc limit 1  排查执行show create table order_info 发现这个表是有加索引的 12345678CREATE TABLE &#96;order_info&#96; (  &#96;id&#96; bigint(20) unsigned">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql遇到的bug1">
+<meta property="og:url" content="https://utinner.gitee.io/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/index.html">
+<meta property="og:site_name" content="代码乐园">
+<meta property="og:description" content="问题背景实际开发过程中遇到一个sql报警： 1select * from order_info where uid &#x3D; 5837661 order by id asc limit 1  排查执行show create table order_info 发现这个表是有加索引的 12345678CREATE TABLE &#96;order_info&#96; (  &#96;id&#96; bigint(20) unsigned">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://utinner.gitee.io/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/1.png">
+<meta property="article:published_time" content="2023-03-28T06:46:39.000Z">
+<meta property="article:modified_time" content="2023-03-28T06:56:29.584Z">
+<meta property="article:author" content="JinPing">
+<meta property="article:tag" content="Mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://utinner.gitee.io/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://utinner.gitee.io/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="代码乐园" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/utinner" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Stevion</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">CVStevion</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Beijing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>持续更新中，欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E5%91%98/">程序员</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法和数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IO/" rel="tag">IO</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/" rel="tag">MongoDB</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http%EF%BC%8Cssl/" rel="tag">http，ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="tag">内存模型</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" rel="tag">定时任务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%99%AE/" rel="tag">科普</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" rel="tag">考研英语</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" rel="tag">音视频行业</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Docker/" style="font-size: 13.67px;">Docker</a> <a href="/tags/Flink/" style="font-size: 13.17px;">Flink</a> <a href="/tags/IO/" style="font-size: 13px;">IO</a> <a href="/tags/JVM/" style="font-size: 13.67px;">JVM</a> <a href="/tags/Java/" style="font-size: 13.5px;">Java</a> <a href="/tags/Java%E5%9F%BA%E7%A1%80/" style="font-size: 13.17px;">Java基础</a> <a href="/tags/Maven/" style="font-size: 13px;">Maven</a> <a href="/tags/MongoDB/" style="font-size: 13.17px;">MongoDB</a> <a href="/tags/Mysql/" style="font-size: 13.33px;">Mysql</a> <a href="/tags/Spring/" style="font-size: 13px;">Spring</a> <a href="/tags/SpringCloud/" style="font-size: 13.33px;">SpringCloud</a> <a href="/tags/git/" style="font-size: 13.17px;">git</a> <a href="/tags/http%EF%BC%8Cssl/" style="font-size: 13px;">http，ssl</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">内存模型</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 13px;">分布式</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 13.17px;">基础知识</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 13px;">多线程</a> <a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 13px;">定时任务</a> <a href="/tags/%E7%A7%91%E6%99%AE/" style="font-size: 13px;">科普</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a> <a href="/tags/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/" style="font-size: 13.83px;">考研英语</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 13px;">链表</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 13.33px;">面试题</a> <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91%E8%A1%8C%E4%B8%9A/" style="font-size: 13px;">音视频行业</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">三月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/" class="title">Mysql遇到的bug1</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-03-28T06:46:39.000Z" itemprop="datePublished">2023-03-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/10/%E5%AE%8C%E5%BD%A2%E5%A1%AB%E7%A9%BA/" class="title">完形填空</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-10T09:06:34.000Z" itemprop="datePublished">2021-11-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/09/%E8%8B%B1%E8%AF%AD%E5%90%8E%E7%BC%80/" class="title">英语后缀</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-09T05:57:52.000Z" itemprop="datePublished">2021-11-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/11/08/%E9%A2%9D%E5%A4%96%E7%9A%84%E8%AF%8D%E6%A0%B9/" class="title">额外的词根</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-11-08T06:48:59.000Z" itemprop="datePublished">2021-11-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD/">考研英语</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/22/%E5%A4%A7%E4%BD%9C%E6%96%87/" class="title">大作文</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-22T02:46:31.000Z" itemprop="datePublished">2021-10-22</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Mysql遇到的bug1" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Mysql遇到的bug1
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/" class="article-date">
+	  <time datetime="2023-03-28T06:46:39.000Z" itemprop="datePublished">2023-03-28</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Mysql/" rel="tag">Mysql</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/" class="leancloud_visitors"  data-flag-title="Mysql遇到的bug1">0</span>
+    </span>
+
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.5k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><p>实际开发过程中遇到一个sql报警：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> order_info <span class="keyword">where</span> uid = <span class="number">5837661</span> <span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">asc</span> <span class="keyword">limit</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h1><p>执行<code>show create table order_info</code> 发现这个表是有加索引的</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `order_info` (</span><br><span class="line">  `id` bigint(<span class="number">20</span>) unsigned <span class="literal">NOT</span> NULL AUTO_INCREMENT,</span><br><span class="line">  `uid` int(<span class="number">11</span>) unsigned,</span><br><span class="line">  `order_status` tinyint(<span class="number">3</span>) DEFAULT NULL,</span><br><span class="line">  ... 省略其它字段和索引</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  KEY `idx_uid_stat` (`uid`,`order_status`),</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8</span><br></pre></td></tr></table></figure>
+
+<p>理论上执行上述 SQL 会命中 idx_uid_stat 这个索引，但实际执行 explain 查看</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> order_info <span class="keyword">where</span> uid = <span class="number">5837661</span> <span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">asc</span> <span class="keyword">limit</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到它的 possible_keys（此 SQL 可能涉及到的索引） 是 <code>idx_uid_stat</code>，但实际上（key）用的却是全表扫描</p>
+<img src="/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/1.png" class width="1">
+
+<p>我们知道 MySQL 是基于成本来选择是基于全表扫描还是选择某个索引来执行最终的执行计划的，所以看起来是全表扫描的成本小于基于 idx_uid_stat 索引执行的成本，不过我的第一感觉很奇怪，这条 SQL 虽然是回表，但它的 limit 是 1，也就是说只选择了满足 uid = 5837661 中的其中一条语句，就算回表也只回一条记录，这种成本几乎可以忽略不计，优化器怎么会选择全表扫描呢。</p>
+<p>为了查看 MySQL 优化器为啥选择了全表扫描，我打开了 optimizer_trace 来一探究竟</p>
+<blockquote>
+<p>在MySQL 5.6 及之后的版本中，我们可以使用 optimizer trace 功能查看优化器生成执行计划的整个过程</p>
+</blockquote>
+<h3 id="使用-optimizer-trace-的具体过程如下"><a href="#使用-optimizer-trace-的具体过程如下" class="headerlink" title="使用 optimizer_trace 的具体过程如下"></a>使用 optimizer_trace 的具体过程如下</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> optimizer_trace=&quot;enabled=on&quot;;        // 打开 optimizer_trace</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> order_info <span class="keyword">where</span> uid = <span class="number">5837661</span> <span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">asc</span> <span class="keyword">limit</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> information_schema.OPTIMIZER_TRACE;    // 查看执行计划表</span><br><span class="line"><span class="keyword">SET</span> optimizer_trace=&quot;enabled=off&quot;; // 关闭 optimizer_trace</span><br></pre></td></tr></table></figure>
+
+<p>MySQL 优化器首先会计算出全表扫描的成本，然后选出该 SQL 可能涉及到的所有索引并且计算索引的成本，然后选出所有成本最小的那个来执行，来看下 optimizer trace 给出的关键信息</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;rows_estimation&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;table&quot;</span>: <span class="string">&quot;`rebate_order_info`&quot;</span>,</span><br><span class="line">      <span class="string">&quot;range_analysis&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;table_scan&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;rows&quot;</span>: 21155996,</span><br><span class="line">          <span class="string">&quot;cost&quot;</span>: 4.45e6    <span class="string">//</span> 全表扫描成本</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">...</span></span><br><span class="line">      <span class="string">&quot;analyzing_range_alternatives&quot;</span>: &#123;</span><br><span class="line">          <span class="string">&quot;range_scan_alternatives&quot;</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="string">&quot;index&quot;</span>: <span class="string">&quot;idx_uid_stat&quot;</span>,</span><br><span class="line">            <span class="string">&quot;ranges&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;5837661 &lt;= uid &lt;= 5837661&quot;</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&quot;index_dives_for_eq_ranges&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">            <span class="string">&quot;rowid_ordered&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="string">&quot;using_mrr&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="string">&quot;index_only&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="string">&quot;rows&quot;</span>: 255918,</span><br><span class="line">            <span class="string">&quot;cost&quot;</span>: 307103,            <span class="string">//</span> 使用idx_uid_stat索引的成本</span><br><span class="line">            <span class="string">&quot;chosen&quot;</span>: <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">          ],</span><br><span class="line">       <span class="string">&quot;chosen_range_access_summary&quot;</span>: &#123;    <span class="string">//</span> 经过上面的各个成本比较后选择的最终结果</span><br><span class="line">         <span class="string">&quot;range_access_plan&quot;</span>: &#123;</span><br><span class="line">             <span class="string">&quot;type&quot;</span>: <span class="string">&quot;range_scan&quot;</span>,</span><br><span class="line">             <span class="string">&quot;index&quot;</span>: <span class="string">&quot;idx_uid_stat&quot;</span>,  <span class="string">//</span> 可以看到最终选择了idx_uid_stat这个索引来执行</span><br><span class="line">             <span class="string">&quot;rows&quot;</span>: 255918,</span><br><span class="line">             <span class="string">&quot;ranges&quot;</span>: [</span><br><span class="line">             <span class="string">&quot;58376617 &lt;= uid &lt;= 58376617&quot;</span></span><br><span class="line">             ]</span><br><span class="line">         &#125;,</span><br><span class="line">         <span class="string">&quot;rows_for_plan&quot;</span>: 255918,</span><br><span class="line">         <span class="string">&quot;cost_for_plan&quot;</span>: 307103,</span><br><span class="line">         <span class="string">&quot;chosen&quot;</span>: <span class="literal">true</span></span><br><span class="line">         &#125;</span><br><span class="line">         &#125;  </span><br><span class="line">    <span class="string">...</span></span><br></pre></td></tr></table></figure>
+<p>可以看到全表扫描的成本是 4.45e6，而选择索引 idx_uid_stat 的成本是 307103，远小于全表扫描的成本，而且从最终的选择结果（chosen_range_access_summary）来看，确实也是选择了 idx_uid_stat 这个索引，但为啥从 explain 看到的选择是执行 PRIMARY 也就是全表扫描呢，难道这个执行计划有误？</p>
+<p>仔细再看了一下这个执行计划，果然发现了猫腻，执行计划中有一个 reconsidering_access_paths_for_index_ordering</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;reconsidering_access_paths_for_index_ordering&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;clause&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ORDER BY&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;index_order_summary&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;table&quot;</span><span class="punctuation">:</span> <span class="string">&quot;`rebate_order_info`&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;index_provides_order&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;order_direction&quot;</span><span class="punctuation">:</span> <span class="string">&quot;asc&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;index&quot;</span><span class="punctuation">:</span> <span class="string">&quot;PRIMARY&quot;</span><span class="punctuation">,</span>    <span class="comment">// 可以看到选择了主键索引</span></span><br><span class="line">      <span class="attr">&quot;plan_changed&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;access_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;index_scan&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个选择表示由于排序的原因再进行了一次索引选择优化，由于我们的 SQL 使用了 id 排序（order by id asc limit 1）,优化器最终选择了 PRIMARY 也就是全表扫描来执行，也就是说这个选择会无视之前的基于索引成本的选择，为什么会有这样的一个选项呢，主要原因如下：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The <span class="keyword">short</span> explanation is that <span class="keyword">the</span> optimizer thinks — <span class="keyword">or</span> should I say hopes — that scanning <span class="keyword">the</span> <span class="keyword">whole</span> table (which is already sorted <span class="keyword">by</span> <span class="keyword">the</span> id field) will find <span class="keyword">the</span> limited rows quick enough, <span class="keyword">and</span> that this will avoid <span class="keyword">a</span> <span class="built_in">sort</span> operation. So <span class="keyword">by</span> trying <span class="built_in">to</span> avoid <span class="keyword">a</span> <span class="built_in">sort</span>, <span class="keyword">the</span> optimizer <span class="keyword">ends</span>-up losing <span class="built_in">time</span> scanning <span class="keyword">the</span> table.</span><br></pre></td></tr></table></figure>
+
+<p>从这段解释可以看出主要原因是由于我们使用了 order by id asc 这种基于 id 的排序写法，优化器认为排序是个昂贵的操作，所以为了避免排序，并且它认为 limit n 的 n 如果很小的话即使使用全表扫描也能很快执行完，所以它选择了全表扫描，也就避免了 id 的排序（全表扫描其实就是基于 id 主键的聚簇索引的扫描，本身就是基于 id 排好序的）</p>
+<p>如果这个选择是对的那也罢了，然而实际上这个优化却是有 bug 的！实际选择 idx_uid_stat 执行会快得多（只要 28 ms）！网上有不少人反馈这个问题，而且出现这个问题基本只与 SQL 中出现 <code>order by id asc limit n</code> 这种写法有关，如果 n 比较小很大概率会走全表扫描，如果 n 比较大则会选择正确的索引。</p>
+<p>这个 bug 最早追溯到 2014 年，不少人都呼吁官方及时修正这个bug，可能是实现比较困难，直到 <code>MySQL 5.7，8.0</code> 都还没解决，所以在官方修复前我们要尽量避免这种写法，如果一定要用这种写法，怎么办呢</p>
+<h1 id="两种方案"><a href="#两种方案" class="headerlink" title="两种方案"></a>两种方案</h1><h3 id="1-使用-force-index-来强制使用指定的索引"><a href="#1-使用-force-index-来强制使用指定的索引" class="headerlink" title="1.使用 force index 来强制使用指定的索引"></a>1.使用 force index 来强制使用指定的索引</h3><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> order_info <span class="keyword">force</span> <span class="keyword">index</span>(idx_uid_stat) <span class="keyword">where</span> uid = <span class="number">5837661</span> <span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">asc</span> <span class="keyword">limit</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-使用-order-by-id-0-方案"><a href="#2-使用-order-by-id-0-方案" class="headerlink" title="2.使用 order by (id+0) 方案"></a>2.使用 order by (id+0) 方案</h3><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> order_info <span class="keyword">where</span> uid = <span class="number">5837661</span> <span class="keyword">order</span> <span class="keyword">by</span> (id+<span class="number">0</span>) <span class="keyword">asc</span> <span class="keyword">limit</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>这种方案也可以让优化器选择正确的索引，更推荐！为什么这个 trick 可以呢，因为此 SQL 虽然是按 id 排序的，但在 id 上作了加法这样耗时的操作(虽然只是加个无用的 0，但足以骗过优化器)，优化器认为此时基于全表扫描会更耗性能，于是会选择基于成本大小的方式来选择索引</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://utinner.gitee.io/2023/03/28/Mysql%E9%81%87%E5%88%B0%E7%9A%84bug1/" title="Mysql遇到的bug1" target="_blank" rel="external">https://utinner.gitee.io/2023/03/28/Mysql遇到的bug1/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/utinner" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/utinner" target="_blank"><span class="text-dark">Stevion</span><small class="ml-1x">CVStevion</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2021/11/10/%E5%AE%8C%E5%BD%A2%E5%A1%AB%E7%A9%BA/" title="完形填空"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="qq,wechat" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/utinner" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<!-- custom analytics part create by xiamo -->
+<script defer src="https://cdn1.lncld.net/static/js/av-min-1.2.1.js"></script>
+<script defer>
+AV.init({
+  appId: 'BNPHGqdExiXaEZFh4AgOPmmu-gzGzoHsz',
+  appKey: 's3p79Nt6MZRbWf5rPoOj9DES'
+});
+
+function showTime(Counter) {
+	var query = new AV.Query(Counter);
+		var visitors= $('.leancloud_visitors');
+		query.greaterThanOrEqualTo("time", 0);		
+		query.find({
+			success: function(results) {
+				if (results.length == 0) {				
+					return;
+				}
+				var data = results;
+				visitors.each(function(){
+					var url = $(this).attr('id').trim();					
+					for (var i = 0; i < data.length; i++) {
+						var object = data[i];
+						var content = object.get('time');
+						var _url = object.get('url')
+						if(url == _url){
+							$(this).text(content);
+						}
+					}
+				})
+				
+			},
+			error: function(object, error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+}
+
+function addCount(Counter) {
+	var Counter = AV.Object.extend("Counter");
+	url = $(".leancloud_visitors").attr('id').trim();
+	title = $(".leancloud_visitors").attr('data-flag-title').trim();
+	var query = new AV.Query(Counter);
+	query.equalTo("url", url);
+	query.find({
+		success: function(results) {
+			if (results.length > 0) {
+				var counter = results[0];
+				counter.fetchWhenSave(true);
+				counter.increment("time");
+				counter.save(null, {
+					success: function(counter) {
+						var content = counter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(counter, error) {
+						console.log('Failed to save Visitor num, with error message: ' + error.message);
+					}
+				});
+			} else {
+				var newcounter = new Counter();
+				newcounter.set("title", title);
+				newcounter.set("url", url);
+				newcounter.set("time", 1);
+				newcounter.save(null, {
+					success: function(newcounter) {
+					    console.log("newcounter.get('time')="+newcounter.get('time'));
+						var content = newcounter.get('time');
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(newcounter, error) {
+						console.log('Failed to create');
+					}
+				});
+			}
+		},
+		error: function(error) {
+			console.log('Error:' + error.code + " " + error.message);
+		}
+	});
+}
+$(function() {
+	var Counter = AV.Object.extend("Counter");
+	if ($('.leancloud_visitors').length == 1) {
+		addCount(Counter);
+	} else {
+		showTime(Counter);
+	}
+}); 
+</script>
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

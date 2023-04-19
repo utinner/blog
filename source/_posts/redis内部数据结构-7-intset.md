@@ -12,7 +12,6 @@ Redis里面使用intset是为了实现集合(set)这种对外的数据结构。s
 - 集中介绍intset数据结构。
 - 讨论set是如何在intset和dict基础上构建起来的。
 - 集中讨论set的并、交、差的算法实现以及时间复杂度。注意，其中差集的计算在Redis中实现了两种算法。
-<!-- More-->
 
 我们在讨论中还会涉及到一个Redis配置（在redis.conf中的ADVANCED CONFIG部分）：
 ```
